@@ -1,6 +1,6 @@
 import type { Book } from '@/lib/supabase'
 
-// Livros mockados para demonstração (não salvos no banco de dados)
+// Livros completos disponíveis para leitura
 export const mockBooks: Book[] = [
   // 1. Bilionário - Romance
   {
@@ -120,24 +120,24 @@ export const mockBooks: Book[] = [
   }
 ]
 
-// Função para obter todos os livros mockados
+// Função para obter todos os livros
 export function getMockBooks(): Book[] {
   return mockBooks
 }
 
-// Função para obter um livro mockado por ID
+// Função para obter um livro por ID
 export function getMockBookById(id: string): Book | undefined {
   return mockBooks.find(book => book.id === id)
 }
 
-// Função para obter livros mockados por categoria
+// Função para obter livros por categoria
 export function getMockBooksByCategory(categorySlug: string): Book[] {
   return mockBooks.filter(book => 
     book.categories?.some(cat => cat.slug === categorySlug)
   )
 }
 
-// Função para buscar livros mockados
+// Função para buscar livros
 export function searchMockBooks(query: string): Book[] {
   const lowerQuery = query.toLowerCase()
   return mockBooks.filter(book => 
