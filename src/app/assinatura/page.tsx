@@ -55,7 +55,7 @@ const PLANS: Plan[] = [
     icon: Sparkles,
     features: [
       'Todos os benefícios do plano mensal',
-      'Economize 17% no valor total',
+      'Economize 13% no valor total',
       'Conteúdo exclusivo trimestral',
       'Acesso antecipado a novos livros',
       'Badge especial no perfil',
@@ -73,7 +73,7 @@ const PLANS: Plan[] = [
     icon: Crown,
     features: [
       'Todos os benefícios anteriores',
-      'Economize 33% no valor total',
+      'Economize 27% no valor total',
       'Conteúdo exclusivo anual',
       'Participação em eventos VIP',
       'Badge premium no perfil',

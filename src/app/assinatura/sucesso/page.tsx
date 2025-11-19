@@ -6,13 +6,13 @@
  * Exibida após o usuário completar o checkout com sucesso.
  */
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { CheckCircle, BookOpen, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 
-export default function AssinaturaSucessoPage() {
+function AssinaturaSucessoContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const sessionId = searchParams.get('session_id')
@@ -126,5 +126,17 @@ export default function AssinaturaSucessoPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function AssinaturaSucessoPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FFF8F0] via-white to-[#FFE5EC]">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#FF2D55] border-t-transparent"></div>
+      </div>
+    }>
+      <AssinaturaSucessoContent />
+    </Suspense>
   )
 }
