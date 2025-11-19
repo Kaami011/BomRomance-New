@@ -7,10 +7,11 @@
  * com design moderno seguindo a identidade Bom Romance (rosa e branco).
  */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Check, Sparkles, Crown, Heart } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { supabase } from '@/lib/supabase'
 
 type PlanType = 'monthly' | 'quarterly' | 'annual'
 
@@ -85,7 +86,26 @@ const PLANS: Plan[] = [
 export default function AssinaturaPage() {
   const [loading, setLoading] = useState<PlanType | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const planFromUrl = searchParams.get('plan') as PlanType | null
+
+  // Verificar autenticação ao carregar a página
+  useEffect(() => {
+    async function checkAuth() {
+      const { data: { user } } = await supabase.auth.getUser()
+      setIsAuthenticated(!!user)
+
+      // Se usuário está autenticado e há um plano na URL, processar automaticamente
+      if (user && planFromUrl && ['monthly', 'quarterly', 'annual'].includes(planFromUrl)) {
+        console.log('✅ Usuário autenticado após login, processando plano:', planFromUrl)
+        await handleSubscribe(planFromUrl)
+      }
+    }
+
+    checkAuth()
+  }, [planFromUrl])
 
   async function handleSubscribe(planType: PlanType) {
     setError(null)
@@ -94,21 +114,33 @@ export default function AssinaturaPage() {
     try {
       console.log('🚀 Iniciando processo de assinatura para:', planType)
       
+      // Verificar autenticação antes de prosseguir
+      const { data: { user } } = await supabase.auth.getUser()
+      
+      if (!user) {
+        console.log('❌ Usuário não autenticado, redirecionando para login')
+        // Redireciona para login com o plano selecionado na URL
+        router.push(`/login?redirect=/assinatura&plan=${planType}`)
+        return
+      }
+
+      console.log('✅ Usuário autenticado:', user.email)
+      
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ planType }),
-        credentials: 'include', // IMPORTANTE: Garante que cookies sejam enviados
+        credentials: 'include',
       })
 
       console.log('📡 Resposta do servidor:', res.status, res.statusText)
 
       if (!res.ok) {
         if (res.status === 401) {
-          console.log('❌ Não autenticado, redirecionando para login')
-          router.push('/login?redirect=/assinatura')
+          console.log('❌ Sessão expirada, redirecionando para login')
+          router.push(`/login?redirect=/assinatura&plan=${planType}`)
           return
         }
         
@@ -121,7 +153,8 @@ export default function AssinaturaPage() {
       console.log('✅ Dados recebidos:', data)
       
       if (data.url) {
-        console.log('🔗 Redirecionando para Stripe:', data.url)
+        console.log('🔗 Redirecionando para Stripe Checkout:', data.url)
+        // Redireciona diretamente para o Stripe Checkout
         window.location.href = data.url
       } else {
         throw new Error('URL de checkout não recebida')
@@ -129,7 +162,6 @@ export default function AssinaturaPage() {
     } catch (error: any) {
       console.error('❌ Erro ao processar assinatura:', error)
       setError(error.message || 'Erro ao processar assinatura. Tente novamente.')
-    } finally {
       setLoading(null)
     }
   }
@@ -150,6 +182,13 @@ export default function AssinaturaPage() {
           {error && (
             <div className="mt-4 max-w-md mx-auto bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
               {error}
+            </div>
+          )}
+
+          {/* Loading Message */}
+          {loading && (
+            <div className="mt-4 max-w-md mx-auto bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-lg">
+              Redirecionando para o checkout...
             </div>
           )}
         </div>

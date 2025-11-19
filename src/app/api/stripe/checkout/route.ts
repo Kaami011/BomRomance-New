@@ -7,28 +7,12 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe, STRIPE_PLANS, PlanType } from '@/lib/stripe'
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { createClient } from '@/lib/supabase/server'
 
 export async function POST(request: NextRequest) {
   try {
-    // 1. Obter usuário logado do Supabase usando cookies (server-side)
-    const cookieStore = await cookies()
-    
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          get(name: string) {
-            return cookieStore.get(name)?.value
-          },
-          set() {},
-          remove() {},
-        },
-      }
-    )
-
+    // 1. Obter usuário logado do Supabase
+    const supabase = await createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()
 
     if (authError || !user) {

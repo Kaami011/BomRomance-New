@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
 export default function LoginPage() {
@@ -13,6 +13,9 @@ export default function LoginPage() {
   const [resetSent, setResetSent] = useState(false)
   const [showResetForm, setShowResetForm] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectUrl = searchParams.get('redirect') || '/'
+  const planType = searchParams.get('plan')
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -28,7 +31,16 @@ export default function LoginPage() {
       if (error) {
         setError('Email ou senha incorretos.')
       } else {
-        router.push('/')
+        // Construir URL de redirecionamento com o plano se existir
+        let finalRedirectUrl = redirectUrl
+        if (planType && redirectUrl.includes('/assinatura')) {
+          finalRedirectUrl = `${redirectUrl}?plan=${planType}`
+        }
+        
+        console.log('✅ Login bem-sucedido, redirecionando para:', finalRedirectUrl)
+        
+        // Redireciona para a URL especificada
+        router.push(finalRedirectUrl)
         router.refresh()
       }
     } catch (err) {
@@ -140,6 +152,11 @@ export default function LoginPage() {
             </h1>
           </Link>
           <p className="text-gray-600">Entre na sua conta</p>
+          {planType && (
+            <p className="text-sm text-[#FF2D55] mt-2">
+              Faça login para continuar com sua assinatura
+            </p>
+          )}
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
