@@ -75,6 +75,12 @@ export function generateSlug(title: string): string {
 
 // Helper: Extrair ID do slug (formato: titulo-do-livro-{id})
 export function extractIdFromSlug(slug: string): string | null {
+  // Se o slug contém "mock-book-", extrair o ID mockado
+  const mockMatch = slug.match(/mock-book-\d+/)
+  if (mockMatch) {
+    return mockMatch[0]
+  }
+  
   // Formato esperado: "titulo-do-livro-053f703c-7e0e-4180-bd9a-e1eb9b89e20e"
   const parts = slug.split('-')
   

@@ -2,9 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ChevronLeft, ChevronRight, Lock, List, Settings } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Lock, List, Settings, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import { supabase, extractIdFromSlug, createBookSlug } from '@/lib/supabase'
+import { getUserSubscription } from '@/lib/subscriptions'
+import { getMockBookById } from '@/data/mockBooks'
+import { getMockChapter, getMockChapters } from '@/data/mockChapters'
 
 interface Chapter {
   id: string
@@ -13,6 +16,7 @@ interface Chapter {
   title: string
   content: string
   views: number
+  is_premium?: boolean
 }
 
 interface Book {
@@ -35,10 +39,27 @@ export default function LerCapituloPage() {
   const [showChapterList, setShowChapterList] = useState(false)
   const [fontSize, setFontSize] = useState(18)
   const [showSettings, setShowSettings] = useState(false)
+  const [user, setUser] = useState<any>(null)
+  const [hasSubscription, setHasSubscription] = useState(false)
+  const [checkingSubscription, setCheckingSubscription] = useState(true)
+  const [isMockBook, setIsMockBook] = useState(false)
 
-  // Primeiros 3 capítulos são gratuitos
-  const isFree = chapterNumber <= 3
-  const isLocked = !isFree
+  // Verificar usuário e assinatura
+  useEffect(() => {
+    async function checkAuth() {
+      const { data: { session } } = await supabase.auth.getSession()
+      setUser(session?.user ?? null)
+
+      if (session?.user) {
+        const subscription = await getUserSubscription(session.user.id)
+        setHasSubscription(subscription !== null && subscription.status === 'active')
+      }
+
+      setCheckingSubscription(false)
+    }
+
+    checkAuth()
+  }, [])
 
   useEffect(() => {
     async function loadChapter() {
@@ -47,7 +68,31 @@ export default function LerCapituloPage() {
       // Extrair ID do slug
       const bookId = extractIdFromSlug(slugOrId) || slugOrId
 
-      // Buscar livro
+      // Se o ID começa com "mock-", buscar diretamente dos dados mockados
+      if (bookId.startsWith('mock-')) {
+        const mockBook = getMockBookById(bookId)
+        if (mockBook) {
+          setBook({
+            id: mockBook.id,
+            title: mockBook.title,
+            author: mockBook.author,
+            total_chapters: mockBook.total_chapters
+          })
+          setIsMockBook(true)
+
+          const mockChapters = getMockChapters(bookId)
+          setAllChapters(mockChapters)
+
+          const mockChapter = getMockChapter(bookId, chapterNumber)
+          if (mockChapter) {
+            setChapter(mockChapter)
+          }
+        }
+        setLoading(false)
+        return
+      }
+
+      // Tentar buscar do banco de dados
       const { data: bookData } = await supabase
         .from('books')
         .select('id, title, author, total_chapters')
@@ -56,35 +101,56 @@ export default function LerCapituloPage() {
 
       if (bookData) {
         setBook(bookData)
-      }
+        setIsMockBook(false)
 
-      // Buscar todos os capítulos
-      const { data: chaptersData } = await supabase
-        .from('chapters')
-        .select('*')
-        .eq('book_id', bookId)
-        .order('chapter_number')
-
-      if (chaptersData) {
-        setAllChapters(chaptersData)
-      }
-
-      // Buscar capítulo atual
-      const { data: chapterData } = await supabase
-        .from('chapters')
-        .select('*')
-        .eq('book_id', bookId)
-        .eq('chapter_number', chapterNumber)
-        .single()
-
-      if (chapterData) {
-        setChapter(chapterData)
-        
-        // Incrementar views do capítulo
-        await supabase
+        // Buscar todos os capítulos
+        const { data: chaptersData } = await supabase
           .from('chapters')
-          .update({ views: (chapterData.views || 0) + 1 })
-          .eq('id', chapterData.id)
+          .select('*')
+          .eq('book_id', bookId)
+          .order('chapter_number')
+
+        if (chaptersData) {
+          setAllChapters(chaptersData)
+        }
+
+        // Buscar capítulo atual
+        const { data: chapterData } = await supabase
+          .from('chapters')
+          .select('*')
+          .eq('book_id', bookId)
+          .eq('chapter_number', chapterNumber)
+          .single()
+
+        if (chapterData) {
+          setChapter(chapterData)
+          
+          // Incrementar views do capítulo
+          await supabase
+            .from('chapters')
+            .update({ views: (chapterData.views || 0) + 1 })
+            .eq('id', chapterData.id)
+        }
+      } else {
+        // Se não encontrou no banco, buscar nos mockados como fallback
+        const mockBook = getMockBookById(bookId)
+        if (mockBook) {
+          setBook({
+            id: mockBook.id,
+            title: mockBook.title,
+            author: mockBook.author,
+            total_chapters: mockBook.total_chapters
+          })
+          setIsMockBook(true)
+
+          const mockChapters = getMockChapters(bookId)
+          setAllChapters(mockChapters)
+
+          const mockChapter = getMockChapter(bookId, chapterNumber)
+          if (mockChapter) {
+            setChapter(mockChapter)
+          }
+        }
       }
 
       setLoading(false)
@@ -100,7 +166,11 @@ export default function LerCapituloPage() {
     setShowChapterList(false)
   }
 
-  if (loading) {
+  // Determinar se o capítulo está bloqueado
+  const isFreeChapter = chapter?.is_premium === false || chapterNumber <= 3
+  const isLocked = !isFreeChapter && !hasSubscription
+
+  if (loading || checkingSubscription) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#FFF8F0]">
         <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#FF2D55] border-t-transparent"></div>
@@ -190,22 +260,23 @@ export default function LerCapituloPage() {
           <div className="border-t border-gray-200 bg-white max-h-96 overflow-y-auto">
             <div className="max-w-4xl mx-auto">
               {allChapters.map((ch) => {
-                const chapterIsFree = ch.chapter_number <= 3
+                const chapterIsFree = ch.is_premium === false || ch.chapter_number <= 3
+                const chapterIsLocked = !chapterIsFree && !hasSubscription
                 const isCurrentChapter = ch.chapter_number === chapterNumber
                 
                 return (
                   <button
                     key={ch.id}
-                    onClick={() => goToChapter(ch.chapter_number)}
-                    disabled={!chapterIsFree}
+                    onClick={() => !chapterIsLocked && goToChapter(ch.chapter_number)}
+                    disabled={chapterIsLocked}
                     className={`w-full px-4 py-3 text-left border-b border-gray-100 hover:bg-gray-50 transition flex items-center justify-between ${
                       isCurrentChapter ? 'bg-[#FF2D55]/5' : ''
-                    } ${!chapterIsFree ? 'opacity-50' : ''}`}
+                    } ${chapterIsLocked ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="text-sm text-gray-500">Cap. {ch.chapter_number}</span>
-                        {!chapterIsFree && <Lock className="w-3 h-3 text-gray-400" />}
+                        {chapterIsLocked && <Lock className="w-3 h-3 text-gray-400" />}
                       </div>
                       <h4 className={`font-medium ${isCurrentChapter ? 'text-[#FF2D55]' : 'text-gray-900'}`}>
                         {ch.title}
@@ -222,24 +293,93 @@ export default function LerCapituloPage() {
         )}
       </header>
 
+      {/* Badge de demonstração */}
+      {isMockBook && (
+        <div className="max-w-4xl mx-auto px-4 pt-4">
+          <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <p className="text-sm text-blue-700">
+              📚 Este é um livro de demonstração. O conteúdo é apenas um exemplo.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Conteúdo do capítulo */}
       <main className="max-w-4xl mx-auto px-4 py-8">
         {isLocked ? (
-          // Capítulo bloqueado
-          <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12 text-center">
-            <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-[#FF2D55] to-[#8B5CF6] rounded-full flex items-center justify-center">
-              <Lock className="w-10 h-10 text-white" />
+          // Capítulo bloqueado - exige assinatura
+          <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div className="bg-gradient-to-r from-[#FF2D55] to-[#8B5CF6] p-8 text-white text-center">
+              <div className="w-20 h-20 mx-auto mb-4 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                <Lock className="w-10 h-10" />
+              </div>
+              <h2 className="text-3xl font-bold mb-2">Capítulo Exclusivo para Assinantes 💗</h2>
+              <p className="text-white/90">
+                Assine o Bom Romance e desbloqueie todos os capítulos completos, lançamentos e conteúdo exclusivo.
+              </p>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-3">Capítulo Bloqueado</h2>
-            <p className="text-gray-600 mb-6">
-              Este capítulo está disponível apenas para assinantes premium.
-            </p>
-            <div className="space-y-3">
-              <button className="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-[#FF2D55] to-[#8B5CF6] text-white rounded-lg font-semibold hover:opacity-90 transition">
-                Assinar Agora
-              </button>
-              <div className="text-sm text-gray-500">
-                Acesso ilimitado a todos os capítulos
+
+            <div className="p-8">
+              {/* Benefícios */}
+              <div className="mb-8">
+                <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-[#FF2D55]" />
+                  O que você ganha com a assinatura:
+                </h3>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-[#FF2D55] rounded-full mt-2"></div>
+                    <span className="text-gray-700">Acesso ilimitado a todos os capítulos de todos os livros</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-[#FF2D55] rounded-full mt-2"></div>
+                    <span className="text-gray-700">Novos capítulos toda semana</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-[#FF2D55] rounded-full mt-2"></div>
+                    <span className="text-gray-700">Leitura sem anúncios</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-[#FF2D55] rounded-full mt-2"></div>
+                    <span className="text-gray-700">Conteúdo exclusivo para assinantes</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-[#FF2D55] rounded-full mt-2"></div>
+                    <span className="text-gray-700">Suporte prioritário</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* CTA */}
+              <div className="space-y-4">
+                {!user ? (
+                  <>
+                    <Link
+                      href="/login?redirect=/assinatura"
+                      className="block w-full py-4 bg-gradient-to-r from-[#FF2D55] to-[#8B5CF6] text-white rounded-lg font-semibold text-center hover:opacity-90 transition"
+                    >
+                      Fazer Login e Ver Planos
+                    </Link>
+                    <p className="text-center text-sm text-gray-600">
+                      Já tem conta?{' '}
+                      <Link href="/login" className="text-[#FF2D55] hover:underline">
+                        Faça login
+                      </Link>
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/assinatura"
+                      className="block w-full py-4 bg-gradient-to-r from-[#FF2D55] to-[#8B5CF6] text-white rounded-lg font-semibold text-center hover:opacity-90 transition"
+                    >
+                      Ver Planos de Assinatura
+                    </Link>
+                    <p className="text-center text-sm text-gray-600">
+                      A partir de R$ 19,90/mês • Cancele quando quiser
+                    </p>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -247,7 +387,19 @@ export default function LerCapituloPage() {
           // Capítulo desbloqueado
           <article className="bg-white rounded-2xl shadow-lg p-6 md:p-12">
             <header className="mb-8 pb-6 border-b border-gray-200">
-              <div className="text-sm text-gray-500 mb-2">Capítulo {chapter.chapter_number}</div>
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-sm text-gray-500">Capítulo {chapter.chapter_number}</div>
+                {isFreeChapter && (
+                  <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
+                    Gratuito
+                  </span>
+                )}
+                {hasSubscription && !isFreeChapter && (
+                  <span className="text-xs bg-gradient-to-r from-[#FF2D55] to-[#8B5CF6] text-white px-2 py-1 rounded-full">
+                    Premium
+                  </span>
+                )}
+              </div>
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
                 {chapter.title}
               </h1>

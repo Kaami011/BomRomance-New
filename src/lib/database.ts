@@ -151,6 +151,11 @@ export async function getCategories() {
 
 // Incrementar visualizações de um livro
 export async function incrementBookViews(bookId: string) {
+  // Se o ID começa com "mock-" ou contém "mock-book-", não incrementar no Supabase
+  if (bookId.startsWith('mock-') || bookId.includes('mock-book-')) {
+    return
+  }
+
   const { error } = await supabase.rpc('increment_book_views', { book_id: bookId })
   
   if (error) {
@@ -181,6 +186,11 @@ export async function addReview(bookId: string, userId: string | null, rating: n
 
 // Buscar livro por ID com detalhes completos
 export async function getBookById(bookId: string) {
+  // Se o ID começa com "mock-" ou contém "mock-book-", não buscar no Supabase
+  if (bookId.startsWith('mock-') || bookId.includes('mock-book-')) {
+    return { book: null, reviews: [], chapters: [], error: null }
+  }
+
   const { data, error } = await supabase
     .from('books')
     .select(`
@@ -238,6 +248,11 @@ export async function getBookById(bookId: string) {
 
 // Buscar capítulo específico
 export async function getChapter(bookId: string, chapterNumber: number) {
+  // Se o ID começa com "mock-" ou contém "mock-book-", não buscar no Supabase
+  if (bookId.startsWith('mock-') || bookId.includes('mock-book-')) {
+    return { chapter: null, error: null }
+  }
+
   const { data, error } = await supabase
     .from('chapters')
     .select('*')

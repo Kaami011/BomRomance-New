@@ -1,11 +1,12 @@
 'use client'
 
-import { Search, User, Menu, X, LogOut, BookOpen, UserCircle } from 'lucide-react'
+import { Search, User, Menu, X, LogOut, BookOpen, UserCircle, Crown } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { CATEGORIES } from '@/lib/constants'
 import { supabase } from '@/lib/supabase'
+import { getUserSubscription } from '@/lib/subscriptions'
 import { useRouter } from 'next/navigation'
 
 export default function Navbar() {
@@ -14,22 +15,36 @@ export default function Navbar() {
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [user, setUser] = useState<any>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [subscription, setSubscription] = useState<any>(null)
   const router = useRouter()
 
   useEffect(() => {
     // Verificar sessão atual
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setUser(session?.user ?? null)
+      
+      // Buscar assinatura se usuário logado
+      if (session?.user) {
+        const sub = await getUserSubscription(session.user.id)
+        setSubscription(sub)
+      }
     })
 
     // Escutar mudanças de autenticação
     const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+      data: { subscription: authSubscription },
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setUser(session?.user ?? null)
+      
+      if (session?.user) {
+        const sub = await getUserSubscription(session.user.id)
+        setSubscription(sub)
+      } else {
+        setSubscription(null)
+      }
     })
 
-    return () => subscription.unsubscribe()
+    return () => authSubscription.unsubscribe()
   }, [])
 
   const handleLogout = async () => {
@@ -46,6 +61,17 @@ export default function Navbar() {
       setIsSearchOpen(false)
     }
   }
+
+  const getPlanName = (planType: string) => {
+    const plans: Record<string, string> = {
+      monthly: 'Mensal',
+      quarterly: 'Trimestral',
+      annual: 'Anual',
+    }
+    return plans[planType] || planType
+  }
+
+  const hasActiveSubscription = subscription && subscription.status === 'active'
 
   return (
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -127,18 +153,36 @@ export default function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
-                  className="text-gray-700 hover:text-[#FF2D55] transition"
+                  className="flex items-center gap-2 text-gray-700 hover:text-[#FF2D55] transition"
                 >
-                  <User className="w-6 h-6" />
+                  {hasActiveSubscription ? (
+                    <div className="flex items-center gap-1 bg-gradient-to-r from-[#FF2D55] to-[#8B5CF6] text-white px-3 py-1.5 rounded-full text-sm font-semibold">
+                      <Crown className="w-4 h-4" />
+                      <span className="hidden lg:inline">Premium</span>
+                    </div>
+                  ) : (
+                    <User className="w-6 h-6" />
+                  )}
                 </button>
 
                 {/* Dropdown do Perfil */}
                 {isProfileOpen && (
-                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200">
+                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200">
                     <div className="py-2">
-                      <div className="px-4 py-2 text-sm text-gray-500 border-b border-gray-200">
-                        {user.email}
+                      <div className="px-4 py-3 border-b border-gray-200">
+                        <div className="text-sm text-gray-500 mb-1">{user.email}</div>
+                        {hasActiveSubscription ? (
+                          <div className="flex items-center gap-2 text-xs">
+                            <Crown className="w-3 h-3 text-[#FF2D55]" />
+                            <span className="text-[#FF2D55] font-semibold">
+                              Assinante {getPlanName(subscription.plan_type)} 💖
+                            </span>
+                          </div>
+                        ) : (
+                          <div className="text-xs text-gray-500">Conta gratuita</div>
+                        )}
                       </div>
+
                       <Link
                         href="/minhas-leituras"
                         onClick={() => setIsProfileOpen(false)}
@@ -147,6 +191,18 @@ export default function Navbar() {
                         <BookOpen className="w-4 h-4 mr-2" />
                         Minhas Leituras
                       </Link>
+
+                      {!hasActiveSubscription && (
+                        <Link
+                          href="/assinatura"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="flex items-center px-4 py-2 text-sm text-[#FF2D55] hover:bg-[#FF2D55]/5 transition font-semibold"
+                        >
+                          <Crown className="w-4 h-4 mr-2" />
+                          Assinar Agora
+                        </Link>
+                      )}
+
                       <hr className="my-2 border-gray-200" />
                       <button
                         onClick={handleLogout}
@@ -178,7 +234,11 @@ export default function Navbar() {
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className="text-gray-700 hover:text-[#FF2D55] transition"
               >
-                <User className="w-5 h-5" />
+                {hasActiveSubscription ? (
+                  <Crown className="w-5 h-5 text-[#FF2D55]" />
+                ) : (
+                  <User className="w-5 h-5" />
+                )}
               </button>
             )}
 
@@ -252,6 +312,11 @@ export default function Navbar() {
                 <Link href="/minhas-leituras" className="block text-gray-700 hover:text-[#FF2D55] transition">
                   Minhas Leituras
                 </Link>
+                {!hasActiveSubscription && (
+                  <Link href="/assinatura" className="block text-[#FF2D55] hover:text-[#E0254A] transition font-semibold">
+                    Assinar Agora
+                  </Link>
+                )}
                 <button
                   onClick={handleLogout}
                   className="block w-full text-left text-red-600 hover:text-red-700 transition"
@@ -268,9 +333,20 @@ export default function Navbar() {
       {isProfileOpen && user && (
         <div className="md:hidden border-t border-gray-200 bg-white">
           <div className="px-4 py-4 space-y-3">
-            <div className="text-sm text-gray-500 pb-2 border-b border-gray-200">
-              {user.email}
+            <div className="pb-3 border-b border-gray-200">
+              <div className="text-sm text-gray-500 mb-1">{user.email}</div>
+              {hasActiveSubscription ? (
+                <div className="flex items-center gap-2 text-xs">
+                  <Crown className="w-3 h-3 text-[#FF2D55]" />
+                  <span className="text-[#FF2D55] font-semibold">
+                    Assinante {getPlanName(subscription.plan_type)} 💖
+                  </span>
+                </div>
+              ) : (
+                <div className="text-xs text-gray-500">Conta gratuita</div>
+              )}
             </div>
+
             <Link
               href="/minhas-leituras"
               onClick={() => setIsProfileOpen(false)}
@@ -279,6 +355,18 @@ export default function Navbar() {
               <BookOpen className="w-4 h-4 mr-2" />
               Minhas Leituras
             </Link>
+
+            {!hasActiveSubscription && (
+              <Link
+                href="/assinatura"
+                onClick={() => setIsProfileOpen(false)}
+                className="flex items-center text-[#FF2D55] hover:text-[#E0254A] transition font-semibold"
+              >
+                <Crown className="w-4 h-4 mr-2" />
+                Assinar Agora
+              </Link>
+            )}
+
             <button
               onClick={handleLogout}
               className="flex items-center w-full text-red-600 hover:text-red-700 transition"

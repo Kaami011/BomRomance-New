@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Search, Filter, X } from 'lucide-react'
 import BookCard from '@/components/custom/book-card'
 import { searchBooks, getCategories } from '@/lib/database'
+import { getMockBooks, searchMockBooks, getMockBooksByCategory } from '@/data/mockBooks'
 import type { Book, Category } from '@/lib/supabase'
 
 export default function ExplorarPage() {
@@ -26,17 +27,55 @@ export default function ExplorarPage() {
     loadCategories()
   }, [])
 
-  // Buscar livros
+  // Buscar livros (incluindo mockados)
   useEffect(() => {
     async function loadBooks() {
       setLoading(true)
-      const { books: results } = await searchBooks({
+      
+      // Buscar livros do banco de dados
+      const { books: dbBooks } = await searchBooks({
         query: searchQuery,
         categorySlug: selectedCategory,
         sortBy,
         limit: 50
       })
-      setBooks(results)
+      
+      // Buscar livros mockados
+      let mockBooksFiltered = getMockBooks()
+      
+      // Aplicar filtro de busca nos mockados
+      if (searchQuery) {
+        mockBooksFiltered = searchMockBooks(searchQuery)
+      }
+      
+      // Aplicar filtro de categoria nos mockados
+      if (selectedCategory) {
+        mockBooksFiltered = getMockBooksByCategory(selectedCategory)
+      }
+      
+      // Combinar livros do banco com mockados
+      const allBooks = [...dbBooks, ...mockBooksFiltered]
+      
+      // Aplicar ordenação
+      const sortedBooks = [...allBooks].sort((a, b) => {
+        switch (sortBy) {
+          case 'views':
+            return b.total_views - a.total_views
+          case 'rating':
+            return (b.average_rating || 0) - (a.average_rating || 0)
+          case 'recent':
+            return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+          case 'trending':
+            // Trending = views + rating
+            const scoreA = a.total_views + ((a.average_rating || 0) * 100000)
+            const scoreB = b.total_views + ((b.average_rating || 0) * 100000)
+            return scoreB - scoreA
+          default:
+            return 0
+        }
+      })
+      
+      setBooks(sortedBooks)
       setLoading(false)
     }
     

@@ -5,6 +5,8 @@ import { useParams } from 'next/navigation'
 import { Eye, Star, BookOpen, Clock, Heart, Share2, ChevronRight, Lock } from 'lucide-react'
 import Link from 'next/link'
 import { getBookById, incrementBookViews, addReview } from '@/lib/database'
+import { getMockBookById } from '@/data/mockBooks'
+import { getMockChapters } from '@/data/mockChapters'
 import { extractIdFromSlug, createBookSlug } from '@/lib/supabase'
 import type { Book } from '@/lib/supabase'
 
@@ -16,6 +18,7 @@ export default function LivroPage() {
   const [reviews, setReviews] = useState<any[]>([])
   const [chapters, setChapters] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [isMockBook, setIsMockBook] = useState(false)
   const [userRating, setUserRating] = useState(0)
   const [userComment, setUserComment] = useState('')
   const [submittingReview, setSubmittingReview] = useState(false)
@@ -29,15 +32,39 @@ export default function LivroPage() {
       // Extrair ID do slug ou usar diretamente se for UUID
       const bookId = extractIdFromSlug(slugOrId) || slugOrId
       
+      // Se o ID começa com "mock-", buscar diretamente dos dados mockados
+      if (bookId.startsWith('mock-')) {
+        const mockBook = getMockBookById(bookId)
+        if (mockBook) {
+          setBook(mockBook)
+          setReviews([])
+          setChapters(getMockChapters(bookId))
+          setIsMockBook(true)
+        }
+        setLoading(false)
+        return
+      }
+      
+      // Tentar buscar do banco de dados
       const { book: bookData, reviews: reviewsData, chapters: chaptersData } = await getBookById(bookId)
       
       if (bookData) {
         setBook(bookData)
         setReviews(reviewsData || [])
         setChapters(chaptersData || [])
+        setIsMockBook(false)
         
         // Incrementar visualizações
         await incrementBookViews(bookId)
+      } else {
+        // Se não encontrou no banco, buscar nos mockados como fallback
+        const mockBook = getMockBookById(bookId)
+        if (mockBook) {
+          setBook(mockBook)
+          setReviews([])
+          setChapters(getMockChapters(bookId))
+          setIsMockBook(true)
+        }
       }
       
       setLoading(false)
@@ -53,6 +80,11 @@ export default function LivroPage() {
     }
 
     if (!book) return
+
+    if (isMockBook) {
+      alert('Este é um livro de demonstração. Avaliações não podem ser salvas.')
+      return
+    }
 
     setSubmittingReview(true)
     const { review } = await addReview(book.id, null, userRating, userComment)
@@ -103,6 +135,15 @@ export default function LivroPage() {
             <ChevronRight className="w-4 h-4" />
             <span className="text-gray-900">{book.title}</span>
           </div>
+
+          {/* Badge de demonstração */}
+          {isMockBook && (
+            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-sm text-blue-700">
+                📚 Este é um livro de demonstração. Os capítulos são exemplos do conteúdo disponível.
+              </p>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Book Cover */}
@@ -263,48 +304,50 @@ export default function LivroPage() {
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Avaliações</h2>
 
           {/* Add Review Form */}
-          <div className="bg-white rounded-lg p-6 mb-8 shadow-sm">
-            <h3 className="font-semibold text-gray-900 mb-4">Deixe sua avaliação</h3>
-            
-            {/* Star Rating */}
-            <div className="flex items-center gap-2 mb-4">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  key={star}
-                  onClick={() => setUserRating(star)}
-                  className="transition-transform hover:scale-110"
-                >
-                  <Star
-                    className={`w-8 h-8 ${
-                      star <= userRating
-                        ? 'fill-yellow-400 text-yellow-400'
-                        : 'text-gray-300'
-                    }`}
-                  />
-                </button>
-              ))}
-              {userRating > 0 && (
-                <span className="ml-2 text-gray-600">{userRating} estrela{userRating > 1 ? 's' : ''}</span>
-              )}
+          {!isMockBook && (
+            <div className="bg-white rounded-lg p-6 mb-8 shadow-sm">
+              <h3 className="font-semibold text-gray-900 mb-4">Deixe sua avaliação</h3>
+              
+              {/* Star Rating */}
+              <div className="flex items-center gap-2 mb-4">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    onClick={() => setUserRating(star)}
+                    className="transition-transform hover:scale-110"
+                  >
+                    <Star
+                      className={`w-8 h-8 ${
+                        star <= userRating
+                          ? 'fill-yellow-400 text-yellow-400'
+                          : 'text-gray-300'
+                      }`}
+                    />
+                  </button>
+                ))}
+                {userRating > 0 && (
+                  <span className="ml-2 text-gray-600">{userRating} estrela{userRating > 1 ? 's' : ''}</span>
+                )}
+              </div>
+
+              {/* Comment */}
+              <textarea
+                value={userComment}
+                onChange={(e) => setUserComment(e.target.value)}
+                placeholder="Escreva seu comentário (opcional)..."
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF2D55] mb-4"
+                rows={4}
+              />
+
+              <button
+                onClick={handleSubmitReview}
+                disabled={submittingReview || userRating === 0}
+                className="px-6 py-2 bg-gradient-to-r from-[#FF2D55] to-[#8B5CF6] text-white rounded-lg font-semibold hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {submittingReview ? 'Enviando...' : 'Enviar Avaliação'}
+              </button>
             </div>
-
-            {/* Comment */}
-            <textarea
-              value={userComment}
-              onChange={(e) => setUserComment(e.target.value)}
-              placeholder="Escreva seu comentário (opcional)..."
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF2D55] mb-4"
-              rows={4}
-            />
-
-            <button
-              onClick={handleSubmitReview}
-              disabled={submittingReview || userRating === 0}
-              className="px-6 py-2 bg-gradient-to-r from-[#FF2D55] to-[#8B5CF6] text-white rounded-lg font-semibold hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {submittingReview ? 'Enviando...' : 'Enviar Avaliação'}
-            </button>
-          </div>
+          )}
 
           {/* Reviews List */}
           <div className="space-y-4">
@@ -333,7 +376,10 @@ export default function LivroPage() {
               ))
             ) : (
               <div className="text-center py-8 text-gray-500">
-                Seja o primeiro a avaliar este livro!
+                {isMockBook 
+                  ? 'Este é um livro de demonstração. Avaliações não estão disponíveis.'
+                  : 'Seja o primeiro a avaliar este livro!'
+                }
               </div>
             )}
           </div>

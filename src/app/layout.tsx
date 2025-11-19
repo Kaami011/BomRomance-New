@@ -6,6 +6,7 @@ import "./globals.css";
 // Import all available fonts for AI usage
 import "../lib/fonts";
 import Navbar from "@/components/custom/navbar";
+import Footer from "@/components/custom/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,6 +42,7 @@ export default function RootLayout({
       >
         <Navbar />
         {children}
+        <Footer />
       </body>
     </html>
   );
