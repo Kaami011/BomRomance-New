@@ -293,16 +293,7 @@ export default function LerCapituloPage() {
         )}
       </header>
 
-      {/* Badge de demonstração */}
-      {isMockBook && (
-        <div className="max-w-4xl mx-auto px-4 pt-4">
-          <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-sm text-blue-700">
-              📚 Este é um livro de demonstração. O conteúdo é apenas um exemplo.
-            </p>
-          </div>
-        </div>
-      )}
+
 
       {/* Conteúdo do capítulo */}
       <main className="max-w-4xl mx-auto px-4 py-8">

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { Eye, Star } from 'lucide-react'
+import { useState } from 'react'
 import type { Book } from '@/lib/supabase'
 import { createBookSlug } from '@/lib/supabase'
 
@@ -11,6 +12,10 @@ interface BookCardProps {
 
 export default function BookCard({ book, rank, showRank = false }: BookCardProps) {
   const bookSlug = createBookSlug(book.title, book.id)
+  const [imageError, setImageError] = useState(false)
+  
+  // Debug: verificar valor da imagem
+  console.log('📚 BookCard:', book.title, '| cover_image:', book.cover_image)
   
   return (
     <Link href={`/livro/${bookSlug}`} className="group">
@@ -32,11 +37,18 @@ export default function BookCard({ book, rank, showRank = false }: BookCardProps
 
         {/* Book Cover */}
         <div className="relative aspect-[2/3] rounded-lg overflow-hidden bg-gray-200 mb-3">
-          {book.cover_image ? (
+          {book.cover_image && !imageError ? (
             <img
               src={book.cover_image}
               alt={book.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              onError={() => {
+                console.error('❌ Erro ao carregar imagem:', book.title, book.cover_image)
+                setImageError(true)
+              }}
+              onLoad={() => {
+                console.log('✅ Imagem carregada:', book.title)
+              }}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#FF2D55] to-[#8B5CF6]">

@@ -81,11 +81,6 @@ export default function LivroPage() {
 
     if (!book) return
 
-    if (isMockBook) {
-      alert('Este é um livro de demonstração. Avaliações não podem ser salvas.')
-      return
-    }
-
     setSubmittingReview(true)
     const { review } = await addReview(book.id, null, userRating, userComment)
     
@@ -136,14 +131,7 @@ export default function LivroPage() {
             <span className="text-gray-900">{book.title}</span>
           </div>
 
-          {/* Badge de demonstração */}
-          {isMockBook && (
-            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-sm text-blue-700">
-                📚 Este é um livro de demonstração. Os capítulos são exemplos do conteúdo disponível.
-              </p>
-            </div>
-          )}
+
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Book Cover */}
@@ -304,9 +292,8 @@ export default function LivroPage() {
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Avaliações</h2>
 
           {/* Add Review Form */}
-          {!isMockBook && (
-            <div className="bg-white rounded-lg p-6 mb-8 shadow-sm">
-              <h3 className="font-semibold text-gray-900 mb-4">Deixe sua avaliação</h3>
+          <div className="bg-white rounded-lg p-6 mb-8 shadow-sm">
+            <h3 className="font-semibold text-gray-900 mb-4">Deixe sua avaliação</h3>
               
               {/* Star Rating */}
               <div className="flex items-center gap-2 mb-4">
@@ -347,7 +334,7 @@ export default function LivroPage() {
                 {submittingReview ? 'Enviando...' : 'Enviar Avaliação'}
               </button>
             </div>
-          )}
+          </div>
 
           {/* Reviews List */}
           <div className="space-y-4">
@@ -376,10 +363,7 @@ export default function LivroPage() {
               ))
             ) : (
               <div className="text-center py-8 text-gray-500">
-                {isMockBook 
-                  ? 'Este é um livro de demonstração. Avaliações não estão disponíveis.'
-                  : 'Seja o primeiro a avaliar este livro!'
-                }
+                Seja o primeiro a avaliar este livro!
               </div>
             )}
           </div>
