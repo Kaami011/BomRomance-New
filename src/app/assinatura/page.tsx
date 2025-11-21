@@ -7,7 +7,7 @@
  * com design moderno seguindo a identidade Bom Romance (rosa e branco).
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { Check, Sparkles, Crown, Heart } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
@@ -83,7 +83,8 @@ const PLANS: Plan[] = [
   },
 ]
 
-export default function AssinaturaPage() {
+// Componente interno que usa useSearchParams
+function AssinaturaContent() {
   const [loading, setLoading] = useState<PlanType | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
@@ -291,5 +292,21 @@ export default function AssinaturaPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+// Componente principal com Suspense boundary
+export default function AssinaturaPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-[#FFF8F0] via-white to-[#FFE5EC] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FF2D55] mx-auto mb-4"></div>
+          <p className="text-gray-600">Carregando planos...</p>
+        </div>
+      </div>
+    }>
+      <AssinaturaContent />
+    </Suspense>
   )
 }
