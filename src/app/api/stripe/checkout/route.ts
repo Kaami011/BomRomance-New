@@ -1,98 +1,74 @@
-/**
- * Stripe Checkout API Endpoint
- * 
- * Cria uma sessão de checkout do Stripe para assinatura.
- * SEMPRE vincula a assinatura ao user_id do usuário logado no Supabase.
- */
-
 import { NextRequest, NextResponse } from 'next/server'
+import { cookies } from 'next/headers'
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { stripe, STRIPE_PLANS, PlanType } from '@/lib/stripe'
-import { createClient } from '@/lib/supabase/server'
 
 export async function POST(request: NextRequest) {
   try {
-    // 1. Obter usuário logado do Supabase
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    // 🔐 1. Obter user logado do Supabase com cookies (ESSENCIAL!)
+    const supabase = createRouteHandlerClient({ cookies })
+
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
 
     if (authError || !user) {
-      console.error('❌ Erro de autenticação:', authError)
+      console.error("❌ Erro de autenticação no checkout:", authError)
       return NextResponse.json(
-        { error: 'Usuário não autenticado. Por favor, faça login novamente.' },
+        { error: "Não autenticado" },
         { status: 401 }
       )
     }
 
-    console.log('✅ Usuário autenticado:', user.id, user.email)
-
-    // 2. Obter planType do body
+    // 🔎 2. Ler o corpo (planType enviado pelo front / Lasy)
     const body = await request.json()
-    const { planType } = body as { planType: PlanType }
+    const planType = body.planType as PlanType
 
     if (!planType || !STRIPE_PLANS[planType]) {
-      console.error('❌ Plano inválido:', planType)
       return NextResponse.json(
-        { error: 'Plano inválido' },
+        { error: "Plano inválido" },
         { status: 400 }
       )
     }
 
-    // 3. Obter price ID do plano
     const priceId = STRIPE_PLANS[planType]
-    console.log('📦 Plano selecionado:', planType, '- Price ID:', priceId)
 
-    // 4. Verificar variáveis de ambiente necessárias
-    if (!process.env.NEXT_PUBLIC_SITE_URL) {
-      console.error('❌ NEXT_PUBLIC_SITE_URL não configurada')
-      return NextResponse.json(
-        { error: 'Configuração do servidor incompleta' },
-        { status: 500 }
-      )
-    }
-
-    // 5. Criar checkout session no Stripe
+    // 🎯 3. Criar sessão de checkout com Stripe
     const session = await stripe.checkout.sessions.create({
-      mode: 'subscription',
-      payment_method_types: ['card'],
+      mode: "subscription",
+      payment_method_types: ["card"],
       line_items: [
         {
           price: priceId,
           quantity: 1,
         },
       ],
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/assinatura/sucesso?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/assinatura`,
-      
-      // IMPORTANTE: Vincular ao user_id do Supabase
+      customer_email: user.email || undefined,
       client_reference_id: user.id,
-      customer_email: user.email,
-      
-      // Metadata para identificar o usuário no webhook
       metadata: {
         userId: user.id,
-        planType: planType,
-        userEmail: user.email || '',
+        userEmail: user.email || "",
+        planType,
       },
+      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/assinatura/sucesso?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/assinatura?cancelled=1`,
     })
 
-    console.log('✅ Checkout session criada:', session.id)
-    console.log('🔗 User ID vinculado:', user.id)
-
-    // 6. Retornar URL da sessão
-    return NextResponse.json({ url: session.url })
-    
+    // 🔗 4. Retornar URL do checkout
+    return NextResponse.json(
+      { url: session.url },
+      { status: 200 }
+    )
   } catch (error: any) {
-    console.error('❌ Erro ao criar checkout:', error)
-    
-    // Mensagens de erro mais específicas
-    let errorMessage = 'Erro ao criar checkout'
-    
-    if (error.type === 'StripeInvalidRequestError') {
-      errorMessage = 'Erro na configuração do Stripe. Verifique os price IDs.'
-    } else if (error.message) {
-      errorMessage = error.message
+    console.error("❌ Erro no endpoint de checkout:", error)
+
+    let errorMessage = "Erro ao criar checkout"
+
+    if (error?.type === "StripeInvalidRequestError") {
+      errorMessage = "Erro na configuração do Stripe. Verifique Price IDs."
     }
-    
+
     return NextResponse.json(
       { error: errorMessage },
       { status: 500 }
