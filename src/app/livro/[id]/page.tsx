@@ -7,7 +7,8 @@ import Link from 'next/link'
 import { getBookById, incrementBookViews, addReview } from '@/lib/database'
 import { getMockBookById } from '@/data/mockBooks'
 import { getMockChapters } from '@/data/mockChapters'
-import { extractIdFromSlug, createBookSlug } from '@/lib/supabase'
+import { extractIdFromSlug, createBookSlug, supabase } from '@/lib/supabase'
+import { getUserSubscription } from '@/lib/subscriptions'
 import type { Book } from '@/lib/supabase'
 
 export default function LivroPage() {
@@ -22,6 +23,27 @@ export default function LivroPage() {
   const [userRating, setUserRating] = useState(0)
   const [userComment, setUserComment] = useState('')
   const [submittingReview, setSubmittingReview] = useState(false)
+  const [hasSubscription, setHasSubscription] = useState(false)
+  const [checkingSubscription, setCheckingSubscription] = useState(true)
+
+  // Verificar assinatura do usuário
+  useEffect(() => {
+    async function checkAuth() {
+      const { data: { session } } = await supabase.auth.getSession()
+
+      if (session?.user) {
+        const subscription = await getUserSubscription(session.user.id)
+        // Verificar se tem assinatura ativa ou em trial
+        const isActive = subscription !== null && 
+                        (subscription.status === 'active' || subscription.status === 'trialing')
+        setHasSubscription(isActive)
+      }
+
+      setCheckingSubscription(false)
+    }
+
+    checkAuth()
+  }, [])
 
   useEffect(() => {
     async function loadBook() {
@@ -94,7 +116,7 @@ export default function LivroPage() {
     setSubmittingReview(false)
   }
 
-  if (loading) {
+  if (loading || checkingSubscription) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#FF2D55] border-t-transparent"></div>
@@ -247,37 +269,43 @@ export default function LivroPage() {
                 <div className="mb-8">
                   <h3 className="text-xl font-bold text-gray-900 mb-4">Capítulos</h3>
                   <div className="bg-gray-50 rounded-lg divide-y divide-gray-200 max-h-96 overflow-y-auto">
-                    {chapters.map((chapter) => (
-                      <Link
-                        key={chapter.id}
-                        href={`/livro/${bookSlug}/ler/${chapter.chapter_number}`}
-                        className={`flex items-center justify-between p-4 transition group ${
-                          chapter.is_premium 
-                            ? 'opacity-60 cursor-not-allowed' 
-                            : 'hover:bg-white'
-                        }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          {chapter.is_premium && (
-                            <Lock className="w-4 h-4 text-gray-400" />
-                          )}
-                          <div>
-                            <span className="text-sm text-gray-500">Capítulo {chapter.chapter_number}</span>
-                            <h4 className={`font-medium ${
-                              chapter.is_premium 
-                                ? 'text-gray-500' 
-                                : 'text-gray-900 group-hover:text-[#FF2D55]'
-                            }`}>
-                              {chapter.title}
-                            </h4>
+                    {chapters.map((chapter) => {
+                      // Determinar se o capítulo está bloqueado
+                      const isFreeChapter = chapter.is_premium === false || chapter.chapter_number <= 3
+                      const isLocked = !isFreeChapter && !hasSubscription
+                      
+                      return (
+                        <Link
+                          key={chapter.id}
+                          href={`/livro/${bookSlug}/ler/${chapter.chapter_number}`}
+                          className={`flex items-center justify-between p-4 transition group ${
+                            isLocked 
+                              ? 'opacity-60 cursor-not-allowed' 
+                              : 'hover:bg-white'
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            {isLocked && (
+                              <Lock className="w-4 h-4 text-gray-400" />
+                            )}
+                            <div>
+                              <span className="text-sm text-gray-500">Capítulo {chapter.chapter_number}</span>
+                              <h4 className={`font-medium ${
+                                isLocked 
+                                  ? 'text-gray-500' 
+                                  : 'text-gray-900 group-hover:text-[#FF2D55]'
+                              }`}>
+                                {chapter.title}
+                              </h4>
+                            </div>
                           </div>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
-                          <Eye className="w-4 h-4" />
-                          <span>{chapter.views}</span>
-                        </div>
-                      </Link>
-                    ))}
+                          <div className="flex items-center gap-2 text-sm text-gray-500">
+                            <Eye className="w-4 h-4" />
+                            <span>{chapter.views}</span>
+                          </div>
+                        </Link>
+                      )
+                    })}
                   </div>
                 </div>
               )}

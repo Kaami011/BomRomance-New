@@ -12,49 +12,7 @@ export default function ResetPasswordPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
-  const [isValidSession, setIsValidSession] = useState(false)
-  const [checkingSession, setCheckingSession] = useState(true)
   const router = useRouter()
-
-  // Verificar se há uma sessão válida de recuperação de senha
-  useEffect(() => {
-    const checkRecoverySession = async () => {
-      try {
-        // Verificar se há um hash na URL (token de recuperação)
-        const hashParams = new URLSearchParams(window.location.hash.substring(1))
-        const accessToken = hashParams.get('access_token')
-        const type = hashParams.get('type')
-
-        console.log('🔍 Verificando sessão de recuperação...', { type, hasToken: !!accessToken })
-
-        if (type === 'recovery' && accessToken) {
-          // Há um token de recuperação válido
-          console.log('✅ Token de recuperação detectado')
-          setIsValidSession(true)
-        } else {
-          // Verificar se já há uma sessão ativa
-          const { data: { session } } = await supabase.auth.getSession()
-          
-          if (session) {
-            console.log('✅ Sessão ativa encontrada')
-            setIsValidSession(true)
-          } else {
-            console.log('❌ Nenhuma sessão válida encontrada')
-            setError('Link de recuperação inválido ou expirado. Solicite um novo link.')
-            setIsValidSession(false)
-          }
-        }
-      } catch (err) {
-        console.error('Erro ao verificar sessão:', err)
-        setError('Erro ao verificar link de recuperação.')
-        setIsValidSession(false)
-      } finally {
-        setCheckingSession(false)
-      }
-    }
-
-    checkRecoverySession()
-  }, [])
 
   // Validação de senha
   const hasUpperCase = /[A-Z]/.test(password)
@@ -83,61 +41,23 @@ export default function ResetPasswordPage() {
     setError('')
 
     try {
-      console.log('🔄 Tentando atualizar senha...')
-      
-      const { data, error } = await supabase.auth.updateUser({
+      const { error } = await supabase.auth.updateUser({
         password: password
       })
 
       if (error) {
-        console.error('❌ Erro ao atualizar senha:', error)
-        setError('Erro ao redefinir senha. O link pode ter expirado. Solicite um novo link.')
+        setError('Erro ao redefinir senha. Tente novamente.')
       } else {
-        console.log('✅ Senha atualizada com sucesso!')
         setSuccess(true)
         setTimeout(() => {
           router.push('/login')
         }, 2000)
       }
     } catch (err) {
-      console.error('❌ Erro inesperado:', err)
       setError('Erro inesperado. Tente novamente.')
     } finally {
       setLoading(false)
     }
-  }
-
-  // Tela de carregamento enquanto verifica sessão
-  if (checkingSession) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center px-4">
-        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FF2D55] mx-auto mb-4"></div>
-          <p className="text-gray-600">Verificando link de recuperação...</p>
-        </div>
-      </div>
-    )
-  }
-
-  // Tela de erro se sessão inválida
-  if (!isValidSession) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center px-4">
-        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <X className="w-8 h-8 text-red-600" />
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Link Inválido</h2>
-          <p className="text-gray-600 mb-6">{error || 'O link de recuperação é inválido ou expirou.'}</p>
-          <Link 
-            href="/login"
-            className="inline-block bg-[#FF2D55] text-white py-3 px-6 rounded-lg hover:bg-[#E0254A] transition font-medium"
-          >
-            Voltar para o login
-          </Link>
-        </div>
-      </div>
-    )
   }
 
   if (success) {

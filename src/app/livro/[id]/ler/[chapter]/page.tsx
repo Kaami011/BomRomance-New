@@ -56,6 +56,7 @@ export default function LerCapituloPage() {
         const isActive = subscription !== null && 
                         (subscription.status === 'active' || subscription.status === 'trialing')
         setHasSubscription(isActive)
+        console.log('🔐 Status da assinatura:', { isActive, subscription })
       }
 
       setCheckingSubscription(false)
@@ -173,6 +174,14 @@ export default function LerCapituloPage() {
   // Regra: capítulos 1-3 são sempre gratuitos OU capítulos marcados como is_premium = false
   const isFreeChapter = chapter?.is_premium === false || chapterNumber <= 3
   const isLocked = !isFreeChapter && !hasSubscription
+
+  console.log('🔓 Status do capítulo:', { 
+    chapterNumber, 
+    isFreeChapter, 
+    hasSubscription, 
+    isLocked,
+    is_premium: chapter?.is_premium 
+  })
 
   if (loading || checkingSubscription) {
     return (
