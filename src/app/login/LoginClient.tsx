@@ -55,17 +55,27 @@ export default function LoginClient() {
     setLoading(true)
     setError('')
 
+    // Validar email
+    if (!email || !email.includes('@')) {
+      setError('Por favor, insira um email válido.')
+      setLoading(false)
+      return
+    }
+
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
       })
 
       if (error) {
-        setError('Erro ao enviar email de recuperação.')
+        console.error('Erro ao enviar email de recuperação:', error)
+        setError('Erro ao enviar email de recuperação. Verifique se o email está correto.')
       } else {
         setResetSent(true)
+        console.log('✅ Email de recuperação enviado com sucesso para:', email)
       }
     } catch (err) {
+      console.error('Erro inesperado:', err)
       setError('Erro inesperado. Tente novamente.')
     } finally {
       setLoading(false)
@@ -88,11 +98,11 @@ export default function LoginClient() {
           {!resetSent ? (
             <form onSubmit={handleResetPassword} className="space-y-6">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="reset-email" className="block text-sm font-medium text-gray-700 mb-2">
                   Email
                 </label>
                 <input
-                  id="email"
+                  id="reset-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -100,6 +110,9 @@ export default function LoginClient() {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF2D55] focus:border-transparent transition"
                   placeholder="seu@email.com"
                 />
+                <p className="text-xs text-gray-500 mt-2">
+                  Enviaremos um link de recuperação para este email.
+                </p>
               </div>
 
               {error && (
@@ -118,7 +131,11 @@ export default function LoginClient() {
 
               <button
                 type="button"
-                onClick={() => setShowResetForm(false)}
+                onClick={() => {
+                  setShowResetForm(false)
+                  setError('')
+                  setResetSent(false)
+                }}
                 className="w-full text-gray-600 hover:text-[#FF2D55] transition text-sm"
               >
                 Voltar para o login
@@ -127,10 +144,16 @@ export default function LoginClient() {
           ) : (
             <div className="space-y-6">
               <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">
-                Link de recuperação enviado! Verifique seu email.
+                <p className="font-medium mb-1">Link de recuperação enviado!</p>
+                <p>Verifique seu email <strong>{email}</strong> e clique no link para redefinir sua senha.</p>
+                <p className="mt-2 text-xs">Não esqueça de verificar a caixa de spam.</p>
               </div>
               <button
-                onClick={() => setShowResetForm(false)}
+                onClick={() => {
+                  setShowResetForm(false)
+                  setResetSent(false)
+                  setError('')
+                }}
                 className="w-full bg-[#FF2D55] text-white py-3 px-4 rounded-lg hover:bg-[#E0254A] transition font-medium"
               >
                 Voltar para o login
@@ -193,7 +216,10 @@ export default function LoginClient() {
           <div className="text-right">
             <button
               type="button"
-              onClick={() => setShowResetForm(true)}
+              onClick={() => {
+                setShowResetForm(true)
+                setError('')
+              }}
               className="text-sm text-[#FF2D55] hover:underline"
             >
               Esqueci minha senha
