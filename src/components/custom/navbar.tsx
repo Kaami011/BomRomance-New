@@ -1,6 +1,6 @@
 'use client'
 
-import { Search, User, Menu, X, LogOut, BookOpen, UserCircle, Crown } from 'lucide-react'
+import { Search, User, Menu, X, LogOut, BookOpen, Crown } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -62,16 +62,20 @@ export default function Navbar() {
     }
   }
 
-  const getPlanName = (planType: string) => {
-    const plans: Record<string, string> = {
-      monthly: 'Mensal',
-      quarterly: 'Trimestral',
-      annual: 'Anual',
+  const getPlanName = (planType?: string | null) => {
+    switch (planType) {
+      case 'monthly':
+        return 'Mensal'
+      case 'quarterly':
+        return 'Trimestral'
+      case 'annual':
+        return 'Anual'
+      default:
+        return ''
     }
-    return plans[planType] || planType
   }
 
-  const hasActiveSubscription = subscription && subscription.status === 'active'
+  const hasActiveSubscription = subscription && (subscription.status === 'active' || subscription.status === 'trialing')
 
   return (
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -172,11 +176,19 @@ export default function Navbar() {
                       <div className="px-4 py-3 border-b border-gray-200">
                         <div className="text-sm text-gray-500 mb-1">{user.email}</div>
                         {hasActiveSubscription ? (
-                          <div className="flex items-center gap-2 text-xs">
-                            <Crown className="w-3 h-3 text-[#FF2D55]" />
-                            <span className="text-[#FF2D55] font-semibold">
-                              Assinante {getPlanName(subscription.plan_type)} 💖
-                            </span>
+                          <div className="flex flex-col gap-0.5 text-xs">
+                            <div className="flex items-center gap-1.5">
+                              <Crown className="w-3 h-3 text-[#FF2D55]" />
+                              <span className="text-[#FF2D55] font-semibold">
+                                Assinante {getPlanName(subscription.plan_type)} 💖
+                              </span>
+                            </div>
+                            {subscription.current_period_start && (
+                              <div className="text-[11px] text-gray-500">
+                                Assinante desde{' '}
+                                {new Date(subscription.current_period_start).toLocaleDateString('pt-BR')}
+                              </div>
+                            )}
                           </div>
                         ) : (
                           <div className="text-xs text-gray-500">Conta gratuita</div>
@@ -336,11 +348,19 @@ export default function Navbar() {
             <div className="pb-3 border-b border-gray-200">
               <div className="text-sm text-gray-500 mb-1">{user.email}</div>
               {hasActiveSubscription ? (
-                <div className="flex items-center gap-2 text-xs">
-                  <Crown className="w-3 h-3 text-[#FF2D55]" />
-                  <span className="text-[#FF2D55] font-semibold">
-                    Assinante {getPlanName(subscription.plan_type)} 💖
-                  </span>
+                <div className="flex flex-col gap-0.5 text-xs">
+                  <div className="flex items-center gap-1.5">
+                    <Crown className="w-3 h-3 text-[#FF2D55]" />
+                    <span className="text-[#FF2D55] font-semibold">
+                      Assinante {getPlanName(subscription.plan_type)} 💖
+                    </span>
+                  </div>
+                  {subscription.current_period_start && (
+                    <div className="text-[11px] text-gray-500">
+                      Assinante desde{' '}
+                      {new Date(subscription.current_period_start).toLocaleDateString('pt-BR')}
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="text-xs text-gray-500">Conta gratuita</div>

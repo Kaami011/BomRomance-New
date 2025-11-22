@@ -261,7 +261,6 @@ A história de Kael e Emily era épica em seu escopo, abrangendo décadas e expl
     
     
     
-    
     'mock-book-5': (num, t) => `Capítulo ${num}: ${t}
 
 ${num === 1 ? 'Amy acordou com um grito preso na garganta, seu coração batendo descontroladamente. Mas algo estava errado - muito errado. Ela olhou ao redor, confusa. Este era seu antigo quarto, na casa de seus pais. Mas como? Ela havia morrido, ela tinha certeza disso. Marcus, o Alfa que ela havia amado e confiado, havia a traído da pior forma possível. Ele havia tirado não apenas sua vida, mas a vida do filhote que ela carregava. A dor daquela memória era tão real, tão vívida... Então ela viu o calendário na parede e seu coração parou. Seis anos. Ela havia voltado seis anos no tempo, antes de conhecer Marcus, antes da traição, antes de tudo.' : ''}

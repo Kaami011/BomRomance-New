@@ -14,6 +14,7 @@ export interface Subscription {
   stripe_subscription_id: string | null
   plan_type: 'monthly' | 'quarterly' | 'annual'
   status: string
+  current_period_start: string | null
   current_period_end: string | null
   created_at: string
   updated_at: string
@@ -30,7 +31,10 @@ export async function getUserSubscription(userId: string): Promise<Subscription 
       .from('subscriptions')
       .select('*')
       .eq('user_id', userId)
-      .eq('status', 'active')
+      .in('status', ['active', 'trialing'])
+      .gt('current_period_end', new Date().toISOString())
+      .order('current_period_end', { ascending: false })
+      .limit(1)
       .single()
 
     if (error) {
@@ -38,7 +42,8 @@ export async function getUserSubscription(userId: string): Promise<Subscription 
         // Nenhuma assinatura encontrada
         return null
       }
-      throw error
+      console.error('Erro ao buscar assinatura do usuário:', error)
+      return null
     }
 
     return data
@@ -62,10 +67,10 @@ export async function hasActiveSubscription(userId: string): Promise<boolean> {
   if (subscription.current_period_end) {
     const periodEnd = new Date(subscription.current_period_end)
     const now = new Date()
-    return periodEnd > now
+    return periodEnd > now && (subscription.status === 'active' || subscription.status === 'trialing')
   }
   
-  return subscription.status === 'active'
+  return subscription.status === 'active' || subscription.status === 'trialing'
 }
 
 /**
@@ -79,18 +84,22 @@ export async function upsertSubscription(data: {
   planType: 'monthly' | 'quarterly' | 'annual'
   status: string
   currentPeriodEnd: Date
+  currentPeriodStart: Date
 }) {
+  const subscriptionData = {
+    user_id: data.userId,
+    stripe_customer_id: data.stripeCustomerId,
+    stripe_subscription_id: data.stripeSubscriptionId,
+    plan_type: data.planType,
+    status: data.status,
+    current_period_start: data.currentPeriodStart.toISOString(),
+    current_period_end: data.currentPeriodEnd.toISOString(),
+    updated_at: new Date().toISOString(),
+  }
+
   const { error } = await supabase
     .from('subscriptions')
-    .upsert({
-      user_id: data.userId,
-      stripe_customer_id: data.stripeCustomerId,
-      stripe_subscription_id: data.stripeSubscriptionId,
-      plan_type: data.planType,
-      status: data.status,
-      current_period_end: data.currentPeriodEnd.toISOString(),
-      updated_at: new Date().toISOString(),
-    }, {
+    .upsert(subscriptionData, {
       onConflict: 'stripe_subscription_id'
     })
 
@@ -98,6 +107,8 @@ export async function upsertSubscription(data: {
     console.error('Erro ao salvar assinatura:', error)
     throw error
   }
+
+  console.log(`✅ Assinatura salva no Supabase: user_id=${data.userId}, status=${data.status}, plan=${data.planType}`)
 }
 
 /**
@@ -126,4 +137,6 @@ export async function updateSubscriptionStatus(
     console.error('Erro ao atualizar status da assinatura:', error)
     throw error
   }
+
+  console.log(`✅ Status da assinatura atualizado: ${stripeSubscriptionId} -> ${status}`)
 }

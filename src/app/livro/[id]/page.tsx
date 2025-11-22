@@ -294,46 +294,45 @@ export default function LivroPage() {
           {/* Add Review Form */}
           <div className="bg-white rounded-lg p-6 mb-8 shadow-sm">
             <h3 className="font-semibold text-gray-900 mb-4">Deixe sua avaliação</h3>
-              
-              {/* Star Rating */}
-              <div className="flex items-center gap-2 mb-4">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    onClick={() => setUserRating(star)}
-                    className="transition-transform hover:scale-110"
-                  >
-                    <Star
-                      className={`w-8 h-8 ${
-                        star <= userRating
-                          ? 'fill-yellow-400 text-yellow-400'
-                          : 'text-gray-300'
-                      }`}
-                    />
-                  </button>
-                ))}
-                {userRating > 0 && (
-                  <span className="ml-2 text-gray-600">{userRating} estrela{userRating > 1 ? 's' : ''}</span>
-                )}
-              </div>
-
-              {/* Comment */}
-              <textarea
-                value={userComment}
-                onChange={(e) => setUserComment(e.target.value)}
-                placeholder="Escreva seu comentário (opcional)..."
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF2D55] mb-4"
-                rows={4}
-              />
-
-              <button
-                onClick={handleSubmitReview}
-                disabled={submittingReview || userRating === 0}
-                className="px-6 py-2 bg-gradient-to-r from-[#FF2D55] to-[#8B5CF6] text-white rounded-lg font-semibold hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {submittingReview ? 'Enviando...' : 'Enviar Avaliação'}
-              </button>
+            
+            {/* Star Rating */}
+            <div className="flex items-center gap-2 mb-4">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  onClick={() => setUserRating(star)}
+                  className="transition-transform hover:scale-110"
+                >
+                  <Star
+                    className={`w-8 h-8 ${
+                      star <= userRating
+                        ? 'fill-yellow-400 text-yellow-400'
+                        : 'text-gray-300'
+                    }`}
+                  />
+                </button>
+              ))}
+              {userRating > 0 && (
+                <span className="ml-2 text-gray-600">{userRating} estrela{userRating > 1 ? 's' : ''}</span>
+              )}
             </div>
+
+            {/* Comment */}
+            <textarea
+              value={userComment}
+              onChange={(e) => setUserComment(e.target.value)}
+              placeholder="Escreva seu comentário (opcional)..."
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF2D55] mb-4"
+              rows={4}
+            />
+
+            <button
+              onClick={handleSubmitReview}
+              disabled={submittingReview || userRating === 0}
+              className="px-6 py-2 bg-gradient-to-r from-[#FF2D55] to-[#8B5CF6] text-white rounded-lg font-semibold hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {submittingReview ? 'Enviando...' : 'Enviar Avaliação'}
+            </button>
           </div>
 
           {/* Reviews List */}

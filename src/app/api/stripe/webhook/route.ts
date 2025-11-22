@@ -42,23 +42,25 @@ export async function POST(request: NextRequest) {
     // Processar eventos
     switch (event.type) {
       case 'checkout.session.completed': {
-        const session = event.data.object as Stripe.Checkout.Session
+        const session = event.data.object as any
 
-        // IMPORTANTE: Obter userId do client_reference_id (vinculado ao Supabase)
+        // IMPORTANTE: Obter userId do client_reference_id ou metadata
         const userId = session.client_reference_id || session.metadata?.userId
 
         if (!userId) {
-          console.error('userId não encontrado na sessão')
+          console.error('❌ userId não encontrado na sessão')
           return NextResponse.json({ error: 'userId ausente' }, { status: 400 })
         }
 
-        const customerId = session.customer as string
-        const subscriptionId = session.subscription as string
-        const planType = session.metadata?.planType as 'monthly' | 'quarterly' | 'annual'
+        // Obter planType e userEmail da metadata
+        const planType = session.metadata?.planType || null
+        const userEmail = session.metadata?.userEmail || session.customer_details?.email || null
 
-        if (!subscriptionId || !planType) {
-          console.error('Dados da assinatura incompletos')
-          return NextResponse.json({ error: 'Dados incompletos' }, { status: 400 })
+        const subscriptionId = session.subscription as string
+
+        if (!subscriptionId) {
+          console.error('❌ subscriptionId não encontrado na sessão')
+          return NextResponse.json({ error: 'subscriptionId ausente' }, { status: 400 })
         }
 
         // Buscar detalhes da assinatura no Stripe
@@ -67,14 +69,15 @@ export async function POST(request: NextRequest) {
         // Criar/atualizar assinatura no Supabase vinculada ao user_id
         await upsertSubscription({
           userId: userId,
-          stripeCustomerId: customerId,
-          stripeSubscriptionId: subscriptionId,
-          planType: planType,
+          stripeCustomerId: subscription.customer as string,
+          stripeSubscriptionId: subscription.id,
+          planType: planType as 'monthly' | 'quarterly' | 'annual',
           status: subscription.status,
           currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+          currentPeriodStart: new Date(subscription.current_period_start * 1000),
         })
 
-        console.log(`✅ Assinatura criada para usuário ${userId}`)
+        console.log(`✅ Assinatura criada para usuário ${userId} | Status: ${subscription.status} | Plano: ${planType}`)
         break
       }
 
