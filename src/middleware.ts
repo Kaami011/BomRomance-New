@@ -4,23 +4,24 @@ import type { NextRequest } from 'next/server'
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Proteger rotas /admin
+  // 🔓 Deixa /admin/migrate livre (sem exigir login)
+  if (pathname === '/admin/migrate') {
+    return NextResponse.next()
+  }
+
+  // 🔒 Continua protegendo o resto do /admin
   if (pathname.startsWith('/admin')) {
-    // Verificar se há token de sessão
     const supabaseToken = request.cookies.get('sb-access-token')
-    
+
     if (!supabaseToken) {
-      // Redirecionar para login se não estiver autenticado
       return NextResponse.redirect(new URL('/login', request.url))
     }
-
-    // Nota: A verificação de role será feita no lado do cliente/servidor
-    // pois o middleware do Next.js não tem acesso direto ao Supabase no Edge Runtime
   }
 
   return NextResponse.next()
 }
 
+// Continua usando o matcher para /admin
 export const config = {
   matcher: ['/admin/:path*']
 }
