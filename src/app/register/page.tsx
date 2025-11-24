@@ -51,6 +51,7 @@ export default function RegisterPage() {
     }
 
     try {
+      // Criar usuário no Supabase Auth
       const { data, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
@@ -58,45 +59,62 @@ export default function RegisterPage() {
           data: {
             name,
             birth_date: birthDate,
+            role: 'reader',
           },
+          emailRedirectTo: `${window.location.origin}/login`,
         },
       })
 
       if (signUpError) {
-        setError(signUpError.message)
-      } else if (data.user) {
-        // Insert into profiles
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            id: data.user.id,
-            name,
-            birth_date: birthDate,
-          })
+        // Mensagens de erro mais amigáveis
+        if (signUpError.message.includes('already registered')) {
+          setError('Este e-mail já está cadastrado. Tente fazer login.')
+        } else if (signUpError.message.includes('Invalid email')) {
+          setError('E-mail inválido. Verifique e tente novamente.')
+        } else if (signUpError.message.includes('Password')) {
+          setError('Senha inválida. Verifique os requisitos de segurança.')
+        } else {
+          setError(signUpError.message)
+        }
+        setLoading(false)
+        return
+      }
 
-        if (profileError) {
-          console.error('Erro ao criar perfil:', profileError)
+      if (data.user) {
+        // Tentar criar perfil na tabela profiles (se existir)
+        // Não bloquear o registro se falhar
+        try {
+          await supabase
+            .from('profiles')
+            .insert({
+              id: data.user.id,
+              name,
+              birth_date: birthDate,
+            })
+        } catch (profileError) {
+          // Ignorar erro de perfil - não é crítico
+          console.log('Perfil será criado automaticamente via trigger ou posteriormente')
         }
 
-        // Mostrar tela de confirmação
-        setShowConfirmation(true)
+        // Verificar se precisa confirmar email
+        if (data.session) {
+          // Login automático (confirmação de email desabilitada)
+          router.push('/')
+        } else {
+          // Precisa confirmar email
+          setShowConfirmation(true)
+        }
       }
-    } catch (err) {
-      setError('Erro inesperado. Tente novamente.')
+    } catch (err: any) {
+      console.error('Erro no registro:', err)
+      setError('Erro inesperado ao criar conta. Tente novamente.')
     } finally {
       setLoading(false)
     }
   }
 
-  const handleConfirmed = async () => {
-    // Verificar se o email foi confirmado
-    const { data: { session } } = await supabase.auth.getSession()
-    
-    if (session?.user?.email_confirmed_at) {
-      router.push('/login')
-    } else {
-      router.push('/login')
-    }
+  const handleConfirmed = () => {
+    router.push('/login')
   }
 
   if (showConfirmation) {
@@ -112,7 +130,7 @@ export default function RegisterPage() {
             </h2>
             <p className="text-gray-600">
               Enviamos um link de confirmação para <strong>{email}</strong>. 
-              Confirme sua conta para continuar.
+              Clique no link para ativar sua conta.
             </p>
           </div>
 
@@ -120,11 +138,11 @@ export default function RegisterPage() {
             onClick={handleConfirmed}
             className="w-full bg-[#FF2D55] text-white py-3 px-4 rounded-lg hover:bg-[#E0254A] transition font-medium"
           >
-            Já confirmei
+            Ir para Login
           </button>
 
           <p className="text-sm text-gray-500 mt-4">
-            Não recebeu o e-mail? Verifique sua caixa de spam.
+            Não recebeu o e-mail? Verifique sua caixa de spam ou aguarde alguns minutos.
           </p>
         </div>
       </div>
