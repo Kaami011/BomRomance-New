@@ -3,9 +3,10 @@
 import { useState, useEffect } from 'react'
 import { Search, Filter, X } from 'lucide-react'
 import BookCard from '@/components/custom/book-card'
-import { searchBooks, getCategories } from '@/lib/database'
+import { searchBooks, getCategories } from '@/lib/books'
 import { getMockBooks, searchMockBooks, getMockBooksByCategory } from '@/data/mockBooks'
-import type { Book, Category } from '@/lib/supabase'
+import { normalizeBook } from '@/lib/books'
+import type { Book, Category } from '@/lib/types'
 
 export default function ExplorarPage() {
   const [books, setBooks] = useState<Book[]>([])
@@ -53,22 +54,41 @@ export default function ExplorarPage() {
         mockBooksFiltered = getMockBooksByCategory(selectedCategory)
       }
       
+      // Normalizar livros mockados para o padrão Book
+      const normalizedMockBooks = mockBooksFiltered.map((mockBook: any) => 
+        normalizeBook({
+          id: mockBook.id,
+          title: mockBook.title,
+          author: mockBook.author,
+          slug: mockBook.slug || mockBook.id,
+          description: mockBook.description || null,
+          cover_url: mockBook.cover_url || null,  // 🔴 Usar cover_url
+          total_views: mockBook.total_views || 0,
+          total_chapters: mockBook.total_chapters || 0,
+          status: mockBook.status || 'ongoing',
+          created_at: mockBook.created_at || new Date().toISOString(),
+          updated_at: mockBook.updated_at || new Date().toISOString(),
+          average_rating: mockBook.average_rating,
+          categories: mockBook.categories || []
+        })
+      )
+      
       // Combinar livros do banco com mockados
-      const allBooks = [...dbBooks, ...mockBooksFiltered]
+      const allBooks = [...dbBooks, ...normalizedMockBooks]
       
       // Aplicar ordenação
       const sortedBooks = [...allBooks].sort((a, b) => {
         switch (sortBy) {
           case 'views':
-            return b.total_views - a.total_views
+            return b.totalViews - a.totalViews
           case 'rating':
-            return (b.average_rating || 0) - (a.average_rating || 0)
+            return (b.averageRating || 0) - (a.averageRating || 0)
           case 'recent':
-            return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+            return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
           case 'trending':
             // Trending = views + rating
-            const scoreA = a.total_views + ((a.average_rating || 0) * 100000)
-            const scoreB = b.total_views + ((b.average_rating || 0) * 100000)
+            const scoreA = a.totalViews + ((a.averageRating || 0) * 100000)
+            const scoreB = b.totalViews + ((b.averageRating || 0) * 100000)
             return scoreB - scoreA
           default:
             return 0

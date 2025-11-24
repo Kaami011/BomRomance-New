@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import { Eye, Star } from 'lucide-react'
-import { useState } from 'react'
-import type { Book } from '@/lib/supabase'
+import type { Book } from '@/lib/types'
 import { createBookSlug } from '@/lib/supabase'
+import { BookCover } from './book-cover'
 
 interface BookCardProps {
   book: Book
@@ -12,10 +12,6 @@ interface BookCardProps {
 
 export default function BookCard({ book, rank, showRank = false }: BookCardProps) {
   const bookSlug = createBookSlug(book.title, book.id)
-  const [imageError, setImageError] = useState(false)
-  
-  // Garantir que sempre temos uma URL de capa válida
-  const coverUrl = book.cover_image || '/images/default-book-cover.svg'
   
   return (
     <Link href={`/livro/${bookSlug}`} className="group">
@@ -35,28 +31,13 @@ export default function BookCard({ book, rank, showRank = false }: BookCardProps
           </div>
         )}
 
-        {/* Book Cover */}
-        <div className="relative aspect-[2/3] rounded-lg overflow-hidden bg-gray-200 mb-3 shadow-md">
-          {coverUrl && !imageError ? (
-            <img
-              src={coverUrl}
-              alt={book.title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              onError={() => {
-                console.error('❌ Erro ao carregar imagem:', book.title, coverUrl)
-                setImageError(true)
-              }}
-              loading="lazy"
-            />
-          ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#FF2D55] to-[#8B5CF6] p-4">
-              <span className="text-white text-4xl font-bold mb-2">{book.title[0]}</span>
-              <span className="text-white text-xs text-center line-clamp-2">{book.title}</span>
-            </div>
-          )}
-          
-          {/* Overlay on hover */}
-          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300" />
+        {/* Book Cover - Componente único */}
+        <div className="mb-3">
+          <BookCover 
+            title={book.title} 
+            coverUrl={book.coverUrl}
+            className="group-hover:scale-105 transition-transform duration-300"
+          />
         </div>
 
         {/* Book Info */}
@@ -75,18 +56,18 @@ export default function BookCard({ book, rank, showRank = false }: BookCardProps
           <div className="flex items-center gap-4 text-xs text-gray-500 pt-1">
             <div className="flex items-center gap-1">
               <Eye className="w-3 h-3" />
-              <span>{book.total_views.toLocaleString()}</span>
+              <span>{book.totalViews.toLocaleString()}</span>
             </div>
             
-            {book.average_rating && book.average_rating > 0 && (
+            {book.averageRating && book.averageRating > 0 && (
               <div className="flex items-center gap-1">
                 <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                <span>{book.average_rating.toFixed(1)}</span>
+                <span>{book.averageRating.toFixed(1)}</span>
               </div>
             )}
             
             <span className="text-gray-400">•</span>
-            <span>{book.total_chapters} caps</span>
+            <span>{book.totalChapters} caps</span>
           </div>
 
           {/* Categories */}

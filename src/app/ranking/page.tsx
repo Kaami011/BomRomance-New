@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react'
 import { Trophy, TrendingUp, Eye, Star } from 'lucide-react'
 import Link from 'next/link'
-import { getRankingBooks } from '@/lib/database'
-import type { Book } from '@/lib/supabase'
+import { getRankingBooks } from '@/lib/books'
+import { BookCover } from '@/components/custom/book-cover'
+import type { Book } from '@/lib/types'
 
 export default function RankingPage() {
   const [books, setBooks] = useState<(Book & { rankingScore: number })[]>([])
@@ -61,19 +62,13 @@ export default function RankingPage() {
                       <span className="text-4xl font-bold text-white">#{index + 1}</span>
                     </div>
 
-                    {/* Book Cover */}
-                    <div className="aspect-[2/3] rounded-lg overflow-hidden mb-4 shadow-2xl">
-                      {book.cover_image ? (
-                        <img
-                          src={book.cover_image}
-                          alt={book.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-white/20">
-                          <span className="text-white text-6xl font-bold">{book.title[0]}</span>
-                        </div>
-                      )}
+                    {/* Book Cover - Componente único */}
+                    <div className="mb-4">
+                      <BookCover 
+                        title={book.title}
+                        coverUrl={book.coverUrl}
+                        className="shadow-2xl group-hover:scale-105 transition-transform duration-300"
+                      />
                     </div>
 
                     {/* Book Info */}
@@ -84,12 +79,12 @@ export default function RankingPage() {
                       <div className="flex items-center gap-4 text-sm">
                         <div className="flex items-center gap-1">
                           <Eye className="w-4 h-4" />
-                          <span>{book.total_views.toLocaleString()}</span>
+                          <span>{book.totalViews.toLocaleString()}</span>
                         </div>
-                        {book.average_rating && book.average_rating > 0 && (
+                        {book.averageRating && book.averageRating > 0 && (
                           <div className="flex items-center gap-1">
                             <Star className="w-4 h-4 fill-white" />
-                            <span>{book.average_rating.toFixed(1)}</span>
+                            <span>{book.averageRating.toFixed(1)}</span>
                           </div>
                         )}
                       </div>
@@ -119,19 +114,13 @@ export default function RankingPage() {
                         <span className="text-white font-bold text-lg">#{rank}</span>
                       </div>
 
-                      {/* Book Cover */}
-                      <div className="flex-shrink-0 w-16 h-24 rounded-lg overflow-hidden bg-gray-200">
-                        {book.cover_image ? (
-                          <img
-                            src={book.cover_image}
-                            alt={book.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#FF2D55] to-[#8B5CF6]">
-                            <span className="text-white text-2xl font-bold">{book.title[0]}</span>
-                          </div>
-                        )}
+                      {/* Book Cover - Componente único */}
+                      <div className="flex-shrink-0 w-16">
+                        <BookCover 
+                          title={book.title}
+                          coverUrl={book.coverUrl}
+                          className="group-hover:scale-105 transition-transform duration-300"
+                        />
                       </div>
 
                       {/* Book Info */}
@@ -160,16 +149,16 @@ export default function RankingPage() {
                       <div className="hidden md:flex flex-col items-end gap-2 text-sm">
                         <div className="flex items-center gap-2 text-gray-600">
                           <Eye className="w-4 h-4" />
-                          <span className="font-medium">{book.total_views.toLocaleString()}</span>
+                          <span className="font-medium">{book.totalViews.toLocaleString()}</span>
                         </div>
-                        {book.average_rating && book.average_rating > 0 && (
+                        {book.averageRating && book.averageRating > 0 && (
                           <div className="flex items-center gap-2 text-yellow-500">
                             <Star className="w-4 h-4 fill-yellow-500" />
-                            <span className="font-medium">{book.average_rating.toFixed(1)}</span>
+                            <span className="font-medium">{book.averageRating.toFixed(1)}</span>
                           </div>
                         )}
                         <div className="text-gray-500 text-xs">
-                          {book.total_chapters} capítulos
+                          {book.totalChapters} capítulos
                         </div>
                       </div>
 

@@ -211,7 +211,7 @@ export async function getBookById(bookId: string) {
   // Buscar capítulos separadamente (SEM conteúdo completo, apenas metadados)
   const { data: chaptersData, error: chaptersError } = await supabase
     .from('chapters')
-    .select('id, book_id, chapter_number, title, views, is_premium, preview_text, content_storage_path, created_at')
+    .select('id, book_id, chapter_number, title, views, preview_text, content_storage_path, created_at')
     .eq('book_id', bookId)
     .order('chapter_number', { ascending: true })
 
@@ -255,7 +255,7 @@ export async function getChapter(bookId: string, chapterNumber: number) {
 
   const { data, error } = await supabase
     .from('chapters')
-    .select('id, book_id, chapter_number, title, views, is_premium, preview_text, content_storage_path, created_at')
+    .select('id, book_id, chapter_number, title, views, preview_text, content_storage_path, created_at')
     .eq('book_id', bookId)
     .eq('chapter_number', chapterNumber)
     .single()

@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react'
 import BookCard from '@/components/custom/book-card'
 import { ChevronRight, TrendingUp, Flame, Star, Clock } from 'lucide-react'
 import Link from 'next/link'
-import { searchBooks } from '@/lib/database'
-import type { Book } from '@/lib/supabase'
+import { searchBooks } from '@/lib/books'
+import type { Book } from '@/lib/types'
 
 export default function Home() {
   const [trendingBooks, setTrendingBooks] = useState<Book[]>([])

@@ -49,13 +49,20 @@ export interface Category {
   created_at: string
 }
 
+/**
+ * Interface de Livro
+ * 
+ * 🔴 CAMPO PADRÃO: cover_url (string | undefined)
+ * - Use cover_url para armazenar URLs de capas
+ * - A normalização converte para coverUrl no tipo Book de types.ts
+ */
 export interface Book {
   id: string
   title: string
   slug?: string
   author: string
   description?: string
-  cover_image?: string
+  cover_url?: string  // 🔴 CAMPO PADRÃO NO BANCO
   total_views: number
   total_chapters: number
   status: 'ongoing' | 'completed'

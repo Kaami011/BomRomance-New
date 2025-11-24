@@ -4,12 +4,13 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { Eye, Star, BookOpen, Clock, Heart, Share2, ChevronRight, Lock } from 'lucide-react'
 import Link from 'next/link'
-import { getBookById, incrementBookViews, addReview } from '@/lib/database'
+import { getBookById, incrementBookViews, addReview } from '@/lib/books'
 import { getMockBookById } from '@/data/mockBooks'
 import { getMockChapters } from '@/data/mockChapters'
 import { extractIdFromSlug, createBookSlug, supabase } from '@/lib/supabase'
 import { getUserSubscription } from '@/lib/subscriptions'
-import type { Book } from '@/lib/supabase'
+import { BookCover } from '@/components/custom/book-cover'
+import type { Book } from '@/lib/types'
 
 export default function LivroPage() {
   const params = useParams()
@@ -153,24 +154,17 @@ export default function LivroPage() {
             <span className="text-gray-900">{book.title}</span>
           </div>
 
-
-
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Book Cover */}
             <div className="md:col-span-1">
               <div className="sticky top-8">
-                <div className="aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl mb-4">
-                  {book.cover_image ? (
-                    <img
-                      src={book.cover_image}
-                      alt={book.title}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#FF2D55] to-[#8B5CF6]">
-                      <span className="text-white text-8xl font-bold">{book.title[0]}</span>
-                    </div>
-                  )}
+                <div className="mb-4">
+                  <BookCover 
+                    title={book.title}
+                    coverUrl={book.coverUrl}
+                    className="shadow-2xl"
+                    showOverlay={false}
+                  />
                 </div>
 
                 {/* Action Buttons */}
@@ -208,21 +202,21 @@ export default function LivroPage() {
               <div className="flex flex-wrap gap-6 mb-6 pb-6 border-b border-gray-200">
                 <div className="flex items-center gap-2">
                   <Eye className="w-5 h-5 text-gray-400" />
-                  <span className="text-gray-900 font-semibold">{book.total_views.toLocaleString()}</span>
+                  <span className="text-gray-900 font-semibold">{book.totalViews.toLocaleString()}</span>
                   <span className="text-gray-500 text-sm">visualizações</span>
                 </div>
                 
-                {book.average_rating && book.average_rating > 0 && (
+                {book.averageRating && book.averageRating > 0 && (
                   <div className="flex items-center gap-2">
                     <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                    <span className="text-gray-900 font-semibold">{book.average_rating.toFixed(1)}</span>
+                    <span className="text-gray-900 font-semibold">{book.averageRating.toFixed(1)}</span>
                     <span className="text-gray-500 text-sm">({reviews.length} avaliações)</span>
                   </div>
                 )}
                 
                 <div className="flex items-center gap-2">
                   <BookOpen className="w-5 h-5 text-gray-400" />
-                  <span className="text-gray-900 font-semibold">{book.total_chapters}</span>
+                  <span className="text-gray-900 font-semibold">{book.totalChapters}</span>
                   <span className="text-gray-500 text-sm">capítulos</span>
                 </div>
                 
