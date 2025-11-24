@@ -66,6 +66,15 @@ export async function POST(request: NextRequest) {
         // Buscar detalhes da assinatura no Stripe
         const subscription = await stripe.subscriptions.retrieve(subscriptionId)
 
+        // Converter timestamps Unix para ISO string com validação
+        const current_period_start = subscription.current_period_start
+          ? new Date(subscription.current_period_start * 1000).toISOString()
+          : null
+
+        const current_period_end = subscription.current_period_end
+          ? new Date(subscription.current_period_end * 1000).toISOString()
+          : null
+
         // Criar/atualizar assinatura no Supabase vinculada ao user_id
         await upsertSubscription({
           userId: userId,
@@ -73,8 +82,8 @@ export async function POST(request: NextRequest) {
           stripeSubscriptionId: subscription.id,
           planType: planType as 'monthly' | 'quarterly' | 'annual',
           status: subscription.status,
-          currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-          currentPeriodStart: new Date(subscription.current_period_start * 1000),
+          currentPeriodEnd: current_period_end,
+          currentPeriodStart: current_period_start,
         })
 
         console.log(`✅ Assinatura criada para usuário ${userId} | Status: ${subscription.status} | Plano: ${planType}`)
@@ -84,10 +93,15 @@ export async function POST(request: NextRequest) {
       case 'customer.subscription.updated': {
         const subscription = event.data.object as Stripe.Subscription
 
+        // Converter timestamp Unix para ISO string com validação
+        const current_period_end = subscription.current_period_end
+          ? new Date(subscription.current_period_end * 1000).toISOString()
+          : null
+
         await updateSubscriptionStatus(
           subscription.id,
           subscription.status,
-          new Date(subscription.current_period_end * 1000)
+          current_period_end
         )
 
         console.log(`✅ Assinatura ${subscription.id} atualizada: ${subscription.status}`)

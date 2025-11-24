@@ -83,8 +83,8 @@ export async function upsertSubscription(data: {
   stripeSubscriptionId: string
   planType: 'monthly' | 'quarterly' | 'annual'
   status: string
-  currentPeriodEnd: Date
-  currentPeriodStart: Date
+  currentPeriodEnd: string | null
+  currentPeriodStart: string | null
 }) {
   const subscriptionData = {
     user_id: data.userId,
@@ -92,8 +92,8 @@ export async function upsertSubscription(data: {
     stripe_subscription_id: data.stripeSubscriptionId,
     plan_type: data.planType,
     status: data.status,
-    current_period_start: data.currentPeriodStart.toISOString(),
-    current_period_end: data.currentPeriodEnd.toISOString(),
+    current_period_start: data.currentPeriodStart,
+    current_period_end: data.currentPeriodEnd,
     updated_at: new Date().toISOString(),
   }
 
@@ -117,7 +117,7 @@ export async function upsertSubscription(data: {
 export async function updateSubscriptionStatus(
   stripeSubscriptionId: string,
   status: string,
-  currentPeriodEnd?: Date
+  currentPeriodEnd?: string | null
 ) {
   const updateData: any = {
     status,
@@ -125,7 +125,7 @@ export async function updateSubscriptionStatus(
   }
 
   if (currentPeriodEnd) {
-    updateData.current_period_end = currentPeriodEnd.toISOString()
+    updateData.current_period_end = currentPeriodEnd
   }
 
   const { error } = await supabase
