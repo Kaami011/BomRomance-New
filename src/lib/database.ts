@@ -208,10 +208,10 @@ export async function getBookById(bookId: string) {
     return { book: null, reviews: [], chapters: [], error }
   }
 
-  // Buscar capítulos separadamente com headers corretos
+  // Buscar capítulos separadamente (SEM conteúdo completo, apenas metadados)
   const { data: chaptersData, error: chaptersError } = await supabase
     .from('chapters')
-    .select('*')
+    .select('id, book_id, chapter_number, title, views, is_premium, preview_text, content_storage_path, created_at')
     .eq('book_id', bookId)
     .order('chapter_number', { ascending: true })
 
@@ -246,7 +246,7 @@ export async function getBookById(bookId: string) {
   }
 }
 
-// Buscar capítulo específico
+// Buscar capítulo específico (SEM conteúdo completo)
 export async function getChapter(bookId: string, chapterNumber: number) {
   // Se o ID começa com "mock-" ou contém "mock-book-", não buscar no Supabase
   if (bookId.startsWith('mock-') || bookId.includes('mock-book-')) {
@@ -255,7 +255,7 @@ export async function getChapter(bookId: string, chapterNumber: number) {
 
   const { data, error } = await supabase
     .from('chapters')
-    .select('*')
+    .select('id, book_id, chapter_number, title, views, is_premium, preview_text, content_storage_path, created_at')
     .eq('book_id', bookId)
     .eq('chapter_number', chapterNumber)
     .single()
@@ -266,6 +266,25 @@ export async function getChapter(bookId: string, chapterNumber: number) {
   }
 
   return { chapter: data as Chapter, error: null }
+}
+
+// Buscar conteúdo completo do capítulo do Storage
+export async function getChapterContent(chapterId: string): Promise<{ content: string | null, error: any }> {
+  try {
+    // Buscar via API route que valida permissões
+    const response = await fetch(`/api/chapters/${chapterId}/content`)
+    
+    if (!response.ok) {
+      const errorData = await response.json()
+      return { content: null, error: errorData }
+    }
+
+    const { data } = await response.json()
+    return { content: data.content, error: null }
+  } catch (error) {
+    console.error('Erro ao buscar conteúdo do capítulo:', error)
+    return { content: null, error }
+  }
 }
 
 // Incrementar visualizações de um capítulo

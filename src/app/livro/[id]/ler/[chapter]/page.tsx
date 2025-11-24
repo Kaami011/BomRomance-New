@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight, Lock, List, Settings, Sparkles } from 'lucid
 import Link from 'next/link'
 import { supabase, extractIdFromSlug, createBookSlug } from '@/lib/supabase'
 import { getUserSubscription } from '@/lib/subscriptions'
+import { getChapterContent } from '@/lib/database'
 import { getMockBookById } from '@/data/mockBooks'
 import { getMockChapter, getMockChapters } from '@/data/mockChapters'
 
@@ -14,9 +15,10 @@ interface Chapter {
   book_id: string
   chapter_number: number
   title: string
-  content: string
+  content?: string
   views: number
   is_premium?: boolean
+  content_storage_path?: string
 }
 
 interface Book {
@@ -34,8 +36,10 @@ export default function LerCapituloPage() {
 
   const [book, setBook] = useState<Book | null>(null)
   const [chapter, setChapter] = useState<Chapter | null>(null)
+  const [chapterContent, setChapterContent] = useState<string | null>(null)
   const [allChapters, setAllChapters] = useState<Chapter[]>([])
   const [loading, setLoading] = useState(true)
+  const [loadingContent, setLoadingContent] = useState(false)
   const [showChapterList, setShowChapterList] = useState(false)
   const [fontSize, setFontSize] = useState(18)
   const [showSettings, setShowSettings] = useState(false)
@@ -90,6 +94,7 @@ export default function LerCapituloPage() {
           const mockChapter = getMockChapter(bookId, chapterNumber)
           if (mockChapter) {
             setChapter(mockChapter)
+            setChapterContent(mockChapter.content)
           }
         }
         setLoading(false)
@@ -107,10 +112,10 @@ export default function LerCapituloPage() {
         setBook(bookData)
         setIsMockBook(false)
 
-        // Buscar todos os capítulos
+        // Buscar todos os capítulos (sem conteúdo completo)
         const { data: chaptersData } = await supabase
           .from('chapters')
-          .select('*')
+          .select('id, book_id, chapter_number, title, views, is_premium, preview_text, content_storage_path, created_at')
           .eq('book_id', bookId)
           .order('chapter_number')
 
@@ -118,10 +123,10 @@ export default function LerCapituloPage() {
           setAllChapters(chaptersData)
         }
 
-        // Buscar capítulo atual
+        // Buscar capítulo atual (sem conteúdo completo)
         const { data: chapterData } = await supabase
           .from('chapters')
-          .select('*')
+          .select('id, book_id, chapter_number, title, views, is_premium, preview_text, content_storage_path, created_at')
           .eq('book_id', bookId)
           .eq('chapter_number', chapterNumber)
           .single()
@@ -153,6 +158,7 @@ export default function LerCapituloPage() {
           const mockChapter = getMockChapter(bookId, chapterNumber)
           if (mockChapter) {
             setChapter(mockChapter)
+            setChapterContent(mockChapter.content)
           }
         }
       }
@@ -162,6 +168,44 @@ export default function LerCapituloPage() {
 
     loadChapter()
   }, [slugOrId, chapterNumber])
+
+  // Carregar conteúdo do capítulo do Storage (quando não for mockado e não estiver bloqueado)
+  useEffect(() => {
+    async function loadContent() {
+      if (!chapter || isMockBook || !chapter.id) return
+
+      // Determinar se o capítulo está bloqueado
+      const isFreeChapter = chapter.is_premium === false || chapterNumber <= 3
+      const isLocked = !isFreeChapter && !hasSubscription
+
+      // Se estiver bloqueado, não carregar conteúdo
+      if (isLocked) {
+        setChapterContent(null)
+        return
+      }
+
+      // Se já tem conteúdo (fallback do banco), usar ele
+      if (chapter.content) {
+        setChapterContent(chapter.content)
+        return
+      }
+
+      // Buscar conteúdo do Storage
+      setLoadingContent(true)
+      const { content, error } = await getChapterContent(chapter.id)
+      
+      if (content) {
+        setChapterContent(content)
+      } else {
+        console.error('Erro ao carregar conteúdo:', error)
+        setChapterContent('Erro ao carregar conteúdo do capítulo.')
+      }
+      
+      setLoadingContent(false)
+    }
+
+    loadContent()
+  }, [chapter, isMockBook, hasSubscription, chapterNumber])
 
   const goToChapter = (num: number) => {
     if (!book) return
@@ -306,8 +350,6 @@ export default function LerCapituloPage() {
         )}
       </header>
 
-
-
       {/* Conteúdo do capítulo */}
       <main className="max-w-4xl mx-auto px-4 py-8">
         {isLocked ? (
@@ -387,6 +429,12 @@ export default function LerCapituloPage() {
               </div>
             </div>
           </div>
+        ) : loadingContent ? (
+          // Carregando conteúdo do Storage
+          <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#FF2D55] border-t-transparent mx-auto mb-4"></div>
+            <p className="text-gray-600">Carregando capítulo...</p>
+          </div>
         ) : (
           // Capítulo desbloqueado
           <article className="bg-white rounded-2xl shadow-lg p-6 md:p-12">
@@ -414,11 +462,15 @@ export default function LerCapituloPage() {
               className="prose prose-lg max-w-none"
               style={{ fontSize: `${fontSize}px`, lineHeight: '1.8' }}
             >
-              {chapter.content.split('\n\n').map((paragraph, index) => (
-                <p key={index} className="mb-6 text-gray-800">
-                  {paragraph}
-                </p>
-              ))}
+              {chapterContent ? (
+                chapterContent.split('\n\n').map((paragraph, index) => (
+                  <p key={index} className="mb-6 text-gray-800">
+                    {paragraph}
+                  </p>
+                ))
+              ) : (
+                <p className="text-gray-500 italic">Conteúdo não disponível</p>
+              )}
             </div>
           </article>
         )}
