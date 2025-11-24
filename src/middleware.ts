@@ -1,19 +1,19 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-export async function middleware(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // 🔓 Deixa /admin/migrate livre (sem exigir login)
+  // 🔓 Libera a rota /admin/migrate sem login
   if (pathname === '/admin/migrate') {
     return NextResponse.next()
   }
 
-  // 🔒 Continua protegendo o resto do /admin
+  // 🔒 Protege todas as outras rotas /admin/**
   if (pathname.startsWith('/admin')) {
-    const supabaseToken = request.cookies.get('sb-access-token')
+    const token = request.cookies.get('sb-access-token')
 
-    if (!supabaseToken) {
+    if (!token) {
       return NextResponse.redirect(new URL('/login', request.url))
     }
   }
@@ -21,7 +21,6 @@ export async function middleware(request: NextRequest) {
   return NextResponse.next()
 }
 
-// Continua usando o matcher para /admin
 export const config = {
   matcher: ['/admin/:path*']
 }
