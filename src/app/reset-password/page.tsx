@@ -12,6 +12,8 @@ export default function ResetPasswordPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [isValidToken, setIsValidToken] = useState(false)
+  const [checkingToken, setCheckingToken] = useState(true)
   const router = useRouter()
 
   // Validação de senha
@@ -23,6 +25,45 @@ export default function ResetPasswordPage() {
 
   const isPasswordValid = hasUpperCase && hasLowerCase && hasNumber && hasSymbol && hasMinLength
   const passwordsMatch = password === confirmPassword && confirmPassword.length > 0
+
+  // Verificar se há um token de recuperação válido na URL
+  useEffect(() => {
+    const checkRecoveryToken = async () => {
+      try {
+        // Verificar se há um hash na URL (token de recuperação)
+        const hashParams = new URLSearchParams(window.location.hash.substring(1))
+        const accessToken = hashParams.get('access_token')
+        const type = hashParams.get('type')
+
+        console.log('🔍 Verificando token de recuperação:', { accessToken: !!accessToken, type })
+
+        if (accessToken && type === 'recovery') {
+          // Token válido encontrado
+          console.log('✅ Token de recuperação válido encontrado')
+          setIsValidToken(true)
+          setCheckingToken(false)
+        } else {
+          // Verificar se há uma sessão ativa (usuário já logado)
+          const { data: { session } } = await supabase.auth.getSession()
+          
+          if (session) {
+            console.log('✅ Sessão ativa encontrada, permitindo redefinição')
+            setIsValidToken(true)
+          } else {
+            console.log('❌ Nenhum token ou sessão válida encontrada')
+            setError('Link de recuperação inválido ou expirado. Solicite um novo link.')
+          }
+          setCheckingToken(false)
+        }
+      } catch (err) {
+        console.error('Erro ao verificar token:', err)
+        setError('Erro ao verificar link de recuperação.')
+        setCheckingToken(false)
+      }
+    }
+
+    checkRecoveryToken()
+  }, [])
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -46,20 +87,59 @@ export default function ResetPasswordPage() {
       })
 
       if (error) {
-        setError('Erro ao redefinir senha. Tente novamente.')
+        console.error('Erro ao redefinir senha:', error)
+        setError('Erro ao redefinir senha. O link pode ter expirado. Tente solicitar um novo.')
       } else {
+        console.log('✅ Senha redefinida com sucesso')
         setSuccess(true)
+        
+        // Aguardar um pouco antes de redirecionar
         setTimeout(() => {
           router.push('/login')
         }, 2000)
       }
     } catch (err) {
+      console.error('Erro inesperado:', err)
       setError('Erro inesperado. Tente novamente.')
     } finally {
       setLoading(false)
     }
   }
 
+  // Tela de carregamento enquanto verifica o token
+  if (checkingToken) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center px-4">
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#FF2D55] border-t-transparent mx-auto mb-4"></div>
+          <p className="text-gray-600">Verificando link de recuperação...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Tela de erro se token inválido
+  if (!isValidToken && !checkingToken) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center px-4">
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <X className="w-8 h-8 text-red-600" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Link Inválido</h2>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <Link
+            href="/login"
+            className="inline-block w-full bg-[#FF2D55] text-white py-3 px-4 rounded-lg hover:bg-[#E0254A] transition font-medium"
+          >
+            Voltar para o Login
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  // Tela de sucesso
   if (success) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center px-4">
@@ -75,6 +155,7 @@ export default function ResetPasswordPage() {
     )
   }
 
+  // Formulário de redefinição de senha
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center px-4">
       <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
@@ -17,35 +17,59 @@ export default function LoginClient() {
   const redirectUrl = searchParams.get('redirect') || '/'
   const planType = searchParams.get('plan')
 
+  // Verificar se usuário já está logado ao carregar a página
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        // Usuário já está logado, redirecionar
+        let finalRedirectUrl = redirectUrl
+        if (planType && redirectUrl.includes('/assinatura')) {
+          finalRedirectUrl = `${redirectUrl}?plan=${planType}`
+        }
+        router.push(finalRedirectUrl)
+        router.refresh()
+      }
+    }
+    checkSession()
+  }, [redirectUrl, planType, router])
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
 
       if (error) {
         setError('Email ou senha incorretos.')
-      } else {
+        setLoading(false)
+      } else if (data.session) {
+        // Login bem-sucedido, aguardar sessão ser estabelecida
+        console.log('✅ Login bem-sucedido, sessão estabelecida')
+        
         // Construir URL de redirecionamento com o plano se existir
         let finalRedirectUrl = redirectUrl
         if (planType && redirectUrl.includes('/assinatura')) {
           finalRedirectUrl = `${redirectUrl}?plan=${planType}`
         }
         
-        console.log('✅ Login bem-sucedido, redirecionando para:', finalRedirectUrl)
+        console.log('✅ Redirecionando para:', finalRedirectUrl)
+        
+        // Aguardar um pouco para garantir que a sessão foi estabelecida
+        await new Promise(resolve => setTimeout(resolve, 500))
         
         // Redireciona para a URL especificada
         router.push(finalRedirectUrl)
         router.refresh()
       }
     } catch (err) {
+      console.error('Erro no login:', err)
       setError('Erro inesperado. Tente novamente.')
-    } finally {
       setLoading(false)
     }
   }
