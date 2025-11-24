@@ -14,8 +14,8 @@ export default function BookCard({ book, rank, showRank = false }: BookCardProps
   const bookSlug = createBookSlug(book.title, book.id)
   const [imageError, setImageError] = useState(false)
   
-  // Debug: verificar valor da imagem
-  console.log('📚 BookCard:', book.title, '| cover_image:', book.cover_image)
+  // Garantir que sempre temos uma URL de capa válida
+  const coverUrl = book.cover_image || '/images/default-book-cover.svg'
   
   return (
     <Link href={`/livro/${bookSlug}`} className="group">
@@ -24,7 +24,7 @@ export default function BookCard({ book, rank, showRank = false }: BookCardProps
         {showRank && rank && (
           <div className="absolute -top-2 -left-2 z-10">
             <div className={`
-              w-10 h-10 rounded-full flex items-center justify-center font-bold text-white text-sm
+              w-10 h-10 rounded-full flex items-center justify-center font-bold text-white text-sm shadow-lg
               ${rank === 1 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600' : ''}
               ${rank === 2 ? 'bg-gradient-to-br from-gray-300 to-gray-500' : ''}
               ${rank === 3 ? 'bg-gradient-to-br from-orange-400 to-orange-600' : ''}
@@ -36,23 +36,22 @@ export default function BookCard({ book, rank, showRank = false }: BookCardProps
         )}
 
         {/* Book Cover */}
-        <div className="relative aspect-[2/3] rounded-lg overflow-hidden bg-gray-200 mb-3">
-          {book.cover_image && !imageError ? (
+        <div className="relative aspect-[2/3] rounded-lg overflow-hidden bg-gray-200 mb-3 shadow-md">
+          {coverUrl && !imageError ? (
             <img
-              src={book.cover_image}
+              src={coverUrl}
               alt={book.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               onError={() => {
-                console.error('❌ Erro ao carregar imagem:', book.title, book.cover_image)
+                console.error('❌ Erro ao carregar imagem:', book.title, coverUrl)
                 setImageError(true)
               }}
-              onLoad={() => {
-                console.log('✅ Imagem carregada:', book.title)
-              }}
+              loading="lazy"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#FF2D55] to-[#8B5CF6]">
-              <span className="text-white text-4xl font-bold">{book.title[0]}</span>
+            <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#FF2D55] to-[#8B5CF6] p-4">
+              <span className="text-white text-4xl font-bold mb-2">{book.title[0]}</span>
+              <span className="text-white text-xs text-center line-clamp-2">{book.title}</span>
             </div>
           )}
           
@@ -79,7 +78,7 @@ export default function BookCard({ book, rank, showRank = false }: BookCardProps
               <span>{book.total_views.toLocaleString()}</span>
             </div>
             
-            {book.average_rating && (
+            {book.average_rating && book.average_rating > 0 && (
               <div className="flex items-center gap-1">
                 <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
                 <span>{book.average_rating.toFixed(1)}</span>
