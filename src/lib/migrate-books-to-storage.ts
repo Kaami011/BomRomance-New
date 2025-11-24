@@ -15,6 +15,7 @@
 import { supabase } from './supabase'
 import { mockBooks } from '@/data/mockBooks'
 import { mockChapters } from '@/data/mockChapters'
+import { v4 as uuidv4 } from 'uuid'
 
 interface MigrationResult {
   success: boolean
@@ -22,6 +23,9 @@ interface MigrationResult {
   chaptersProcessed: number
   errors: string[]
 }
+
+// Mapa para converter IDs mockados em UUIDs reais
+const bookIdMap: Record<string, string> = {}
 
 export async function migrateBooksToStorage(): Promise<MigrationResult> {
   const result: MigrationResult = {
@@ -37,12 +41,19 @@ export async function migrateBooksToStorage(): Promise<MigrationResult> {
     try {
       console.log(`📚 Processando livro: ${book.title}`)
 
-      // 1. Preparar dados do livro
+      // 1. Gerar UUID real para o livro (ou usar existente se já foi migrado)
+      let realBookId = bookIdMap[book.id]
+      if (!realBookId) {
+        realBookId = uuidv4()
+        bookIdMap[book.id] = realBookId
+      }
+
+      // 2. Preparar dados do livro
       const bookData = {
-        id: book.id,
+        id: realBookId, // UUID válido
         title: book.title,
         author: book.author,
-        slug: book.id, // Será gerado automaticamente pelo trigger
+        slug: book.id, // Usar o ID mockado como slug
         description: book.description,
         cover_url: book.cover_image,
         total_views: book.total_views,
@@ -54,7 +65,7 @@ export async function migrateBooksToStorage(): Promise<MigrationResult> {
         updated_at: book.updated_at
       }
 
-      // 2. Upsert do livro
+      // 3. Upsert do livro
       const { error: bookError } = await supabase
         .from('books')
         .upsert(bookData, { onConflict: 'id' })
@@ -65,31 +76,34 @@ export async function migrateBooksToStorage(): Promise<MigrationResult> {
       }
 
       result.booksProcessed++
-      console.log(`✅ Livro ${book.title} inserido/atualizado`)
+      console.log(`✅ Livro ${book.title} inserido/atualizado com ID: ${realBookId}`)
 
-      // 3. Processar capítulos
+      // 4. Processar capítulos
       const chapters = mockChapters[book.id] || []
       console.log(`📖 Processando ${chapters.length} capítulos...`)
 
       for (const chapter of chapters) {
         try {
-          // 3.1. Gerar preview (primeiros 400 caracteres)
+          // 4.1. Gerar UUID real para o capítulo
+          const realChapterId = uuidv4()
+
+          // 4.2. Gerar preview (primeiros 400 caracteres)
           const previewText = chapter.content
             ? chapter.content.substring(0, 400) + '...'
             : ''
 
-          // 3.2. Preparar conteúdo completo para o Storage
+          // 4.3. Preparar conteúdo completo para o Storage
           const chapterContent = {
-            bookId: book.id,
+            bookId: realBookId, // Usar UUID real
             chapterIndex: chapter.chapter_number,
             title: chapter.title,
             content: chapter.content
           }
 
-          // 3.3. Definir path no Storage
+          // 4.4. Definir path no Storage (usar slug do livro para facilitar)
           const storagePath = `${book.id}/chapter_${chapter.chapter_number}.json`
 
-          // 3.4. Upload para o Storage
+          // 4.5. Upload para o Storage
           const { error: uploadError } = await supabase.storage
             .from('chapters')
             .upload(storagePath, JSON.stringify(chapterContent, null, 2), {
@@ -104,10 +118,10 @@ export async function migrateBooksToStorage(): Promise<MigrationResult> {
             continue
           }
 
-          // 3.5. Preparar dados do capítulo para o banco
+          // 4.6. Preparar dados do capítulo para o banco
           const chapterData = {
-            id: chapter.id,
-            book_id: book.id,
+            id: realChapterId, // UUID válido
+            book_id: realBookId, // UUID válido do livro
             chapter_number: chapter.chapter_number,
             title: chapter.title,
             content: null, // Não salvar conteúdo completo no Postgres
@@ -119,7 +133,7 @@ export async function migrateBooksToStorage(): Promise<MigrationResult> {
             updated_at: chapter.created_at
           }
 
-          // 3.6. Upsert do capítulo
+          // 4.7. Upsert do capítulo
           const { error: chapterError } = await supabase
             .from('chapters')
             .upsert(chapterData, { onConflict: 'id' })
