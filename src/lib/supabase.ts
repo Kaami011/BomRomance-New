@@ -1,20 +1,44 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key'
+// Obter variáveis de ambiente
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-  },
-  global: {
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    }
-  }
-})
+// Validar se as credenciais estão configuradas
+const hasValidCredentials = 
+  supabaseUrl && 
+  supabaseAnonKey && 
+  supabaseUrl.includes('supabase.co') && 
+  supabaseAnonKey.length > 20
+
+if (!hasValidCredentials) {
+  console.warn('⚠️ Credenciais do Supabase não configuradas ou inválidas.')
+  console.warn('Configure NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY')
+}
+
+// Criar cliente Supabase apenas se as credenciais forem válidas
+export const supabase = hasValidCredentials 
+  ? createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        flowType: 'pkce'
+      },
+      global: {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        }
+      }
+    })
+  : createClient('https://placeholder.supabase.co', 'placeholder-key', {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+        detectSessionInUrl: false,
+      }
+    })
 
 // Types
 export interface Category {

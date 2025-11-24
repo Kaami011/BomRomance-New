@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -28,7 +28,28 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [showConfirmation, setShowConfirmation] = useState(false)
+  const [supabaseConfigured, setSupabaseConfigured] = useState(true)
   const router = useRouter()
+
+  // Verificar se Supabase está configurado
+  useEffect(() => {
+    const checkSupabase = async () => {
+      try {
+        const { data, error } = await supabase.auth.getSession()
+        // Se retornar erro específico de sandbox, significa que não está configurado
+        if (error && error.message.includes('sandbox')) {
+          setSupabaseConfigured(false)
+          setError('⚠️ Supabase não configurado. Configure suas credenciais nas variáveis de ambiente.')
+        }
+      } catch (err: any) {
+        if (err.message && err.message.includes('sandbox')) {
+          setSupabaseConfigured(false)
+          setError('⚠️ Supabase não configurado. Configure NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY.')
+        }
+      }
+    }
+    checkSupabase()
+  }, [])
 
   const allRequirementsMet = passwordRequirements.every((req) => req.test(password))
   const passwordsMatch = password === confirmPassword && confirmPassword.length > 0
@@ -37,6 +58,13 @@ export default function RegisterPage() {
     e.preventDefault()
     setLoading(true)
     setError('')
+
+    // Verificar se Supabase está configurado
+    if (!supabaseConfigured) {
+      setError('⚠️ Sistema de autenticação não configurado. Entre em contato com o suporte.')
+      setLoading(false)
+      return
+    }
 
     if (!allRequirementsMet) {
       setError('A senha não atende a todos os requisitos de segurança.')
@@ -66,6 +94,14 @@ export default function RegisterPage() {
       })
 
       if (signUpError) {
+        // Verificar erro de sandbox
+        if (signUpError.message.includes('sandbox')) {
+          setError('⚠️ Sistema não configurado. Configure as credenciais do Supabase.')
+          setSupabaseConfigured(false)
+          setLoading(false)
+          return
+        }
+
         // Mensagens de erro mais amigáveis
         if (signUpError.message.includes('already registered')) {
           setError('Este e-mail já está cadastrado. Tente fazer login.')
@@ -81,19 +117,24 @@ export default function RegisterPage() {
       }
 
       if (data.user) {
-        // Tentar criar perfil na tabela profiles (se existir)
-        // Não bloquear o registro se falhar
+        // Atualizar perfil na tabela profiles usando UPSERT
+        // A trigger já criou o registro básico, então atualizamos com os dados completos
         try {
-          await supabase
+          const { error: profileError } = await supabase
             .from('profiles')
-            .insert({
+            .upsert({
               id: data.user.id,
               name,
               birth_date: birthDate,
             })
+
+          if (profileError) {
+            // Logar erro mas não bloquear o cadastro
+            console.error('Erro ao atualizar perfil (não crítico):', profileError)
+          }
         } catch (profileError) {
-          // Ignorar erro de perfil - não é crítico
-          console.log('Perfil será criado automaticamente via trigger ou posteriormente')
+          // Logar erro mas não bloquear o cadastro
+          console.error('Erro ao atualizar perfil (não crítico):', profileError)
         }
 
         // Verificar se precisa confirmar email
