@@ -20,7 +20,7 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 export const STRIPE_PLANS = {
   monthly: 'price_1SV4JJ1OX1wPZ0uVT7wIAfqp',
   quarterly: 'price_1SV4Ne1OX1wPZ0uVfOPv8XK1',
-  annual: 'price_1SV4Wi1OX1wPZ0uVndqKNuux',
+  annual: 'price_1STEsv1OX1wPZ0uVB79Q3UPr',
 } as const
 
 export const STRIPE_PRODUCT_ID = 'prod_TRyFEzzjPeCdte'
