@@ -117,8 +117,9 @@ export default function RegisterPage() {
       }
 
       if (data.user) {
-        // Atualizar perfil na tabela profiles usando UPSERT
-        // A trigger já criou o registro básico, então atualizamos com os dados completos
+        // Criar/atualizar perfil na tabela profiles usando UPSERT
+        // IMPORTANTE: Agora o código é responsável por criar o perfil (sem trigger)
+        // O upsert garante que funciona tanto para criação quanto atualização
         try {
           const { error: profileError } = await supabase
             .from('profiles')
@@ -129,12 +130,18 @@ export default function RegisterPage() {
             })
 
           if (profileError) {
-            // Logar erro mas não bloquear o cadastro
-            console.error('Erro ao atualizar perfil (não crítico):', profileError)
+            // Logar erro mas NÃO bloquear o cadastro
+            // O usuário foi criado com sucesso no auth.users
+            console.error('Erro ao salvar perfil:', profileError)
+            console.error('Detalhes do erro:', {
+              message: profileError.message,
+              details: profileError.details,
+              hint: profileError.hint,
+            })
           }
         } catch (profileError) {
-          // Logar erro mas não bloquear o cadastro
-          console.error('Erro ao atualizar perfil (não crítico):', profileError)
+          // Logar erro mas NÃO bloquear o cadastro
+          console.error('Erro ao salvar perfil:', profileError)
         }
 
         // Verificar se precisa confirmar email
