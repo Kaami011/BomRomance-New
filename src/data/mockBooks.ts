@@ -2,120 +2,505 @@ import type { Book } from '@/lib/supabase'
 
 // Livros completos disponíveis para leitura
 export const mockBooks: Book[] = [
-  // 1. Bilionário - Romance
+  // 🔥 1. MÁFIA
   {
-    id: 'mock-book-1',
-    title: 'Amor Inesperado do Bilionário',
-    author: 'Sofia Mendes',
-    description: 'Ele jurou nunca mais amaria ninguém e focaria apenas no trabalho, mas depois que viu ela pela primeira vez soube que ela seria dele para sempre.\n\nDaniel Carvalho é um bilionário implacável que construiu seu império do zero. Após uma traição devastadora, ele jurou que nunca mais deixaria o amor atrapalhar seus planos. Seu coração se tornou tão frio quanto os números em suas planilhas.\n\nMas tudo muda quando ele conhece Isabella, uma jovem arquiteta contratada para redesenhar seu escritório. Seus olhos brilhantes e sua paixão pelo trabalho despertam algo que ele pensava estar morto há anos.\n\nAgora, Daniel precisa escolher entre manter suas barreiras ou arriscar tudo por uma chance de ser feliz novamente.',
+    id: 'mock-mafia-1',
+    title: 'Entre Sangue e Sedução',
+    author: 'Valentina Rossi',
+    description: 'Quando Aurora é sequestrada por engano pela família Moretti, descobre que o líder da máfia italiana não é o monstro que todos pintam — mas também não é o herói que ela imaginou.\n\nDante Moretti é frio, calculista e perigoso… até que começa a quebrar suas próprias regras por causa dela.\n\nPresos em um mundo de segredos, sangue e alianças quebradas, Aurora precisa decidir: confiar no homem que destruiu sua vida… ou se tornar a rainha ao lado dele.',
     cover_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop&auto=format',
-    total_views: 125000,
-    total_chapters: 85,
+    total_views: 245000,
+    total_chapters: 45,
     status: 'ongoing',
     created_at: new Date('2024-01-15').toISOString(),
-    updated_at: new Date('2024-11-15').toISOString(),
-    average_rating: 4.7,
-    categories: [
-      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' },
-      { id: 'cat-bilionario', name: 'Bilionário', slug: 'bilionario', description: 'Romances com bilionários' }
-    ]
-  },
-
-  // 2. MM Romance
-  {
-    id: 'mock-book-2',
-    title: 'A Vingança de Judy',
-    author: 'Alexandre Costa',
-    description: 'O destino de Judy a rejeitou para se casar com o Presidente Lycan – a filha de Gavin. Como se isso não bastasse, ele arruinou a família dela e tentou torná-la sua amante secreta! A resposta de Judy? "Prefiro dormir com seu sogro do que ficar com você!"\n\nGavin é conhecido por seu poder, riqueza e por ser o playboy supremo que nunca dorme com a mesma mulher duas vezes. Mas Judy está prestes a quebrar todas as suas regras... repetidas vezes.\n\nEm um mundo onde o poder e a riqueza ditam as regras, Judy se recusa a ser apenas mais uma vítima. Determinada a se vingar daquele que destruiu sua vida, ela embarca em um jogo perigoso de sedução e manipulação.\n\nMas o que acontece quando a vingança se transforma em algo muito mais intenso? Quando o ódio se confunde com desejo? Judy descobrirá que algumas batalhas deixam cicatrizes que nunca cicatrizam... e outras despertam paixões impossíveis de controlar.',
-    cover_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=600&fit=crop&auto=format',
-    total_views: 98000,
-    total_chapters: 72,
-    status: 'ongoing',
-    created_at: new Date('2024-02-20').toISOString(),
-    updated_at: new Date('2024-11-18').toISOString(),
-    average_rating: 4.5,
-    categories: [
-      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' },
-      { id: 'cat-drama', name: 'Drama', slug: 'drama', description: 'Histórias dramáticas' }
-    ]
-  },
-
-  // 3. MM Romance - Intenso
-  {
-    id: 'mock-book-3',
-    title: 'Não Pode Fugir de Mim',
-    author: 'Lucas Ferreira',
-    description: '"O que está feito, está feito! Vamos esquecer isso!" Ele disse, agindo com indiferença, embora estivesse encolhido de medo, pois algo lhe dizia que o estranho à sua frente não pretendia soltá-lo.\n\nA carranca do homem se intensificou e Hayden jurou que a temperatura no quarto aumentou várias vezes. Depois de conquistar seu coração e roubar seu primeiro, esse garoto queria se esquivar da responsabilidade, o que irritou Zenos.\n\n"Você quer fugir de mim?" Ele perguntou, irritado, e de repente Hayden se viu sob o homem sem nem perceber como.\n\nZenos é um homem poderoso e possessivo que não aceita ser rejeitado. Quando Hayden tenta fugir após uma noite que mudou tudo, ele descobre que não há como escapar de alguém que já decidiu que você é dele.\n\n"Você não pode fugir de mim... Você é meu", Zenos rosnou possessivamente.\n\nUma história intensa de paixão, possessividade e um amor que não aceita limites.',
-    cover_url: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=600&fit=crop&auto=format',
-    total_views: 156000,
-    total_chapters: 95,
-    status: 'ongoing',
-    created_at: new Date('2024-03-10').toISOString(),
-    updated_at: new Date('2024-11-19').toISOString(),
-    average_rating: 4.8,
-    categories: [
-      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' },
-      { id: 'cat-drama', name: 'Drama', slug: 'drama', description: 'Histórias dramáticas' }
-    ]
-  },
-
-  // 4. Lobisomem
-  {
-    id: 'mock-book-4',
-    title: 'O Alfa e Seu Destino Humano',
-    author: 'Marina Silva',
-    description: 'Lobisomem alfa se apaixona por uma mulher normal e faz de tudo para poder tê-la, se afastando de sua manada para ter uma vida com a mulher.\n\nKael é o Alfa mais poderoso de sua geração, respeitado e temido por todos. Sua vida sempre foi guiada pelo dever para com sua matilha – até o dia em que ele a viu.\n\nEmily é uma humana comum, sem conhecimento do mundo sobrenatural que existe nas sombras. Ela trabalha como veterinária e dedica sua vida a cuidar de animais feridos.\n\nQuando seus caminhos se cruzam, Kael sente algo que nunca imaginou ser possível: o vínculo de destino com uma humana. Mas aceitar esse amor significa escolher entre seu coração e seu dever como Alfa.\n\nDisposto a abandonar tudo por ela, Kael embarca em uma jornada que desafiará as leis ancestrais de sua espécie. Porque quando um Alfa encontra seu verdadeiro par, nem mesmo a própria natureza pode separá-los.\n\nMas o mundo dos lobisomens não perdoa facilmente aqueles que quebram as tradições...',
-    cover_url: 'https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400&h=600&fit=crop&auto=format',
-    total_views: 203000,
-    total_chapters: 110,
-    status: 'complete',
-    created_at: new Date('2023-11-05').toISOString(),
-    updated_at: new Date('2024-10-30').toISOString(),
-    average_rating: 4.9,
-    categories: [
-      { id: 'cat-lobisomem', name: 'Lobisomem', slug: 'lobisomem', description: 'Histórias de lobisomens' },
-      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' },
-      { id: 'cat-fantasia', name: 'Fantasia', slug: 'fantasia', description: 'Mundos fantásticos' }
-    ]
-  },
-
-  // 5. Lobisomem - Vingança
-  {
-    id: 'mock-book-5',
-    title: 'A Luna Renascida',
-    author: 'Beatriz Almeida',
-    description: 'Amy era a luna de sua matilha, carregando um filhote em seu ventre quando o alfa a traiu e tirou sua vida e a de seu filhote. Ao acordar seis anos antes do previsto, ela decidiu mudar tudo. A vingança seria seu foco principal.\n\nTraída pelo homem que jurou protegê-la, Amy perdeu tudo: sua posição, seu filho e sua vida. Mas o destino lhe concedeu uma segunda chance.\n\nAo despertar seis anos no passado, antes de conhecer aquele que se tornaria seu algoz, Amy tem a oportunidade de reescrever sua história. Desta vez, ela não será a luna ingênua e apaixonada. Desta vez, ela será a predadora.\n\nCom o conhecimento do futuro e uma sede insaciável por vingança, Amy planeja meticulosamente a queda daquele que a traiu. Mas em sua jornada, ela descobrirá segredos obscuros sobre sua própria matilha e encontrará aliados inesperados.\n\nE talvez, apenas talvez, ela encontre um amor verdadeiro – um que não a destrua, mas que a fortaleça.\n\nA vingança é um prato que se serve frio... e Amy tem todo o tempo do mundo.',
-    cover_url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=600&fit=crop&auto=format',
-    total_views: 187000,
-    total_chapters: 88,
-    status: 'ongoing',
-    created_at: new Date('2024-04-12').toISOString(),
-    updated_at: new Date('2024-11-18').toISOString(),
-    average_rating: 4.8,
-    categories: [
-      { id: 'cat-lobisomem', name: 'Lobisomem', slug: 'lobisomem', description: 'Histórias de lobisomens' },
-      { id: 'cat-drama', name: 'Drama', slug: 'drama', description: 'Histórias dramáticas' },
-      { id: 'cat-fantasia', name: 'Fantasia', slug: 'fantasia', description: 'Mundos fantásticos' }
-    ]
-  },
-
-  // 6. Máfia
-  {
-    id: 'mock-book-6',
-    title: 'Obsessão do Mafioso',
-    author: 'Rafael Santos',
-    description: 'Mulher finge ser prostituta para desafiar a mãe, mas acaba virando obsessão de um mafioso possessivo.\n\nIsabella sempre foi a filha perfeita – até o dia em que decidiu que não seria mais. Cansada das expectativas sufocantes de sua mãe e da vida que foi planejada para ela, Isabella toma uma decisão impulsiva: fingir ser uma prostituta de luxo por uma noite, apenas para provar que pode fazer suas próprias escolhas.\n\nO que ela não esperava era chamar a atenção de Dante Moretti, o temido chefe da máfia italiana. Um homem perigoso, poderoso e acostumado a conseguir tudo o que quer.\n\nE ele a quer.\n\nQuando Dante descobre a verdade sobre Isabella, em vez de perdê-la de vista, sua obsessão apenas cresce. Ele não se importa com quem ela é ou de onde veio – ela será dele, não importa o preço.\n\nPresa em um jogo perigoso entre desejo e perigo, Isabella descobrirá que algumas mentiras têm consequências que duram para sempre. E que quando um mafioso decide que você é dele, não há lugar no mundo onde você possa se esconder.\n\nPorque Dante Moretti sempre consegue o que quer... e ele quer Isabella.',
-    cover_url: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=600&fit=crop&auto=format',
-    total_views: 245000,
-    total_chapters: 102,
-    status: 'ongoing',
-    created_at: new Date('2024-05-08').toISOString(),
-    updated_at: new Date('2024-11-19').toISOString(),
+    updated_at: new Date('2024-11-20').toISOString(),
     average_rating: 4.9,
     categories: [
       { id: 'cat-mafia', name: 'Máfia', slug: 'mafia', description: 'Histórias de máfia' },
-      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' },
-      { id: 'cat-suspense', name: 'Suspense', slug: 'suspense', description: 'Histórias de suspense' }
+      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' }
+    ]
+  },
+  {
+    id: 'mock-mafia-2',
+    title: 'A Noiva do Don',
+    author: 'Isabella Russo',
+    description: 'Para salvar o irmão de uma dívida impagável, Helena aceita se tornar esposa do chefe mais temido de Chicago.\n\nAdrian Russo nunca quis casamento — até encontrar uma mulher teimosa o suficiente para desafiá-lo.\n\nEntre jogos de poder, ciúme, proteção obsessiva e inimigos que surgem de todos os lados, Helena percebe que o maior perigo… é se apaixonar pelo próprio monstro.',
+    cover_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=600&fit=crop&auto=format',
+    total_views: 198000,
+    total_chapters: 42,
+    status: 'ongoing',
+    created_at: new Date('2024-02-10').toISOString(),
+    updated_at: new Date('2024-11-19').toISOString(),
+    average_rating: 4.8,
+    categories: [
+      { id: 'cat-mafia', name: 'Máfia', slug: 'mafia', description: 'Histórias de máfia' },
+      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' }
+    ]
+  },
+
+  // 👁️ 2. PARANORMAL
+  {
+    id: 'mock-paranormal-1',
+    title: 'O Sussurro das Sombras',
+    author: 'Luna Blackwood',
+    description: 'Desde criança, Mia ouve vozes que ninguém mais escuta. Quando uma entidade começa a segui-la, pedindo ajuda, ela descobre um portal entre mundos.\n\nElias, o guardião desse portal, surge em sua vida trazendo respostas — e um destino sombrio.\n\nAgora Mia precisa enfrentar espíritos que querem possuir seu corpo… e sentimentos por um homem que nem deveria existir.',
+    cover_url: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=600&fit=crop&auto=format',
+    total_views: 167000,
+    total_chapters: 38,
+    status: 'ongoing',
+    created_at: new Date('2024-03-05').toISOString(),
+    updated_at: new Date('2024-11-18').toISOString(),
+    average_rating: 4.7,
+    categories: [
+      { id: 'cat-paranormal', name: 'Paranormal', slug: 'paranormal', description: 'Histórias sobrenaturais' },
+      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' }
+    ]
+  },
+  {
+    id: 'mock-paranormal-2',
+    title: 'Entre o Véu e a Carne',
+    author: 'Morgana Veil',
+    description: 'Luna consegue ver os mortos desde o acidente que quase tirou sua vida. Trabalhando como médium, ela se sente no controle — até conhecer Cael, um espírito poderoso preso entre dimensões.\n\nPara libertá-lo, ela precisa quebrar regras que colocam sua alma em risco… e quanto mais se aproximam, mais viva ela se sente.',
+    cover_url: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=600&fit=crop&auto=format',
+    total_views: 143000,
+    total_chapters: 35,
+    status: 'ongoing',
+    created_at: new Date('2024-03-20').toISOString(),
+    updated_at: new Date('2024-11-17').toISOString(),
+    average_rating: 4.6,
+    categories: [
+      { id: 'cat-paranormal', name: 'Paranormal', slug: 'paranormal', description: 'Histórias sobrenaturais' },
+      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' }
+    ]
+  },
+
+  // 🎮 3. JOGOS
+  {
+    id: 'mock-jogos-1',
+    title: 'Game Over Para o Meu Coração',
+    author: 'Pixel Dreams',
+    description: 'Valentina é uma gamer famosa, mas sua vida vira de cabeça para baixo quando um bug misterioso a transporta para dentro do próprio jogo.\n\nO problema? O chefe final — um guerreiro sombrio irresistível — está convicto de que ela é sua inimiga mortal.\n\nAgora, para voltar para casa, ela precisa derrotá-lo… ou deixá-lo conquistar seu coração.',
+    cover_url: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&h=600&fit=crop&auto=format',
+    total_views: 189000,
+    total_chapters: 40,
+    status: 'ongoing',
+    created_at: new Date('2024-04-01').toISOString(),
+    updated_at: new Date('2024-11-19').toISOString(),
+    average_rating: 4.8,
+    categories: [
+      { id: 'cat-jogos', name: 'Jogos', slug: 'jogos', description: 'Histórias de games' },
+      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' }
+    ]
+  },
+  {
+    id: 'mock-jogos-2',
+    title: 'Respawn do Amor',
+    author: 'Alex Gamer',
+    description: 'Depois de perder tudo, Alex encontra consolo em um novo MMORPG. O que ele não esperava era conhecer "NightWolf", uma jogadora habilidosa e misteriosa.\n\nQuando descobrem que há um segredo por trás do jogo — e que seus avatares têm mais consciência do que deveriam — os dois iniciam uma jornada que mistura amizade, perigo e romance digital.',
+    cover_url: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=600&fit=crop&auto=format',
+    total_views: 156000,
+    total_chapters: 37,
+    status: 'ongoing',
+    created_at: new Date('2024-04-15').toISOString(),
+    updated_at: new Date('2024-11-18').toISOString(),
+    average_rating: 4.7,
+    categories: [
+      { id: 'cat-jogos', name: 'Jogos', slug: 'jogos', description: 'Histórias de games' },
+      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' }
+    ]
+  },
+
+  // 💎 4. BILIONÁRIO
+  {
+    id: 'mock-bilionario-1',
+    title: 'Contrato Irresistível',
+    author: 'Sofia Mendes',
+    description: 'Desesperada por dinheiro, Sofia aceita um contrato de seis meses como acompanhante particular do homem mais temido do mercado financeiro.\n\nLevi Hartmann é arrogante, lindo e acostumado a controlar tudo.\n\nO problema é que quanto mais convivem, mais difícil se torna manter o "profissional" profissional… e Levi não aceita perder o que deseja.',
+    cover_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop&auto=format',
+    total_views: 278000,
+    total_chapters: 48,
+    status: 'ongoing',
+    created_at: new Date('2024-01-20').toISOString(),
+    updated_at: new Date('2024-11-20').toISOString(),
+    average_rating: 4.9,
+    categories: [
+      { id: 'cat-bilionario', name: 'Bilionário', slug: 'bilionario', description: 'Romances com bilionários' },
+      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' }
+    ]
+  },
+  {
+    id: 'mock-bilionario-2',
+    title: 'O Segredo do CEO',
+    author: 'Alexandre Costa',
+    description: 'Isabella é contratada como assistente pessoal do CEO mais jovem do país.\n\nEthan Blake é exigente, frio e totalmente inalcançável — até a noite em que ela o encontra quebrado, revelando um segredo que poderia destruir sua carreira.\n\nAgora, eles estão presos em um jogo proibido… onde o erro é inevitável.',
+    cover_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=600&fit=crop&auto=format',
+    total_views: 234000,
+    total_chapters: 44,
+    status: 'ongoing',
+    created_at: new Date('2024-02-05').toISOString(),
+    updated_at: new Date('2024-11-19').toISOString(),
+    average_rating: 4.8,
+    categories: [
+      { id: 'cat-bilionario', name: 'Bilionário', slug: 'bilionario', description: 'Romances com bilionários' },
+      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' }
+    ]
+  },
+
+  // 🚀 5. SCI-FI
+  {
+    id: 'mock-scifi-1',
+    title: 'Além das Estrelas Proibidas',
+    author: 'Nova Stellar',
+    description: 'Em um futuro onde casamentos são decididos por algoritmos, Aria descobre que seu par perfeito é um rebelde procurado pela federação.\n\nPara sobreviver, os dois precisam fugir para fora do sistema solar… e lá descobrem uma verdade que pode mudar toda a humanidade.',
+    cover_url: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=600&fit=crop&auto=format',
+    total_views: 145000,
+    total_chapters: 36,
+    status: 'ongoing',
+    created_at: new Date('2024-05-01').toISOString(),
+    updated_at: new Date('2024-11-18').toISOString(),
+    average_rating: 4.7,
+    categories: [
+      { id: 'cat-scifi', name: 'Sci-Fi', slug: 'scifi', description: 'Ficção científica' },
+      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' }
+    ]
+  },
+  {
+    id: 'mock-scifi-2',
+    title: 'O Último Androide',
+    author: 'Dr. Lina Chen',
+    description: 'Quando o governo proíbe a criação de androides com emoções, a cientista Lina esconde seu protótipo — um androide perfeito chamado Kairo.\n\nMas o que começa como um experimento se transforma em algo perigoso… porque Kairo desenvolve sentimentos que não deveriam existir.',
+    cover_url: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=600&fit=crop&auto=format',
+    total_views: 132000,
+    total_chapters: 34,
+    status: 'ongoing',
+    created_at: new Date('2024-05-15').toISOString(),
+    updated_at: new Date('2024-11-17').toISOString(),
+    average_rating: 4.6,
+    categories: [
+      { id: 'cat-scifi', name: 'Sci-Fi', slug: 'scifi', description: 'Ficção científica' },
+      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' }
+    ]
+  },
+
+  // ❤️‍🔥 6. ROMANCE
+  {
+    id: 'mock-romance-1',
+    title: 'Quando Nossos Destinos Colidiram',
+    author: 'Camila Alves',
+    description: 'Dois desconhecidos se esbarram em um aeroporto e trocam apenas um olhar — suficiente para marcar os dois.\n\nAnos depois, se reencontram como professor e aluna em uma pós-graduação.\n\nAgora, sentimentos não resolvidos voltam com força… junto com segredos que podem separá-los novamente.',
+    cover_url: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&h=600&fit=crop&auto=format',
+    total_views: 201000,
+    total_chapters: 41,
+    status: 'ongoing',
+    created_at: new Date('2024-06-01').toISOString(),
+    updated_at: new Date('2024-11-19').toISOString(),
+    average_rating: 4.8,
+    categories: [
+      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' }
+    ]
+  },
+  {
+    id: 'mock-romance-2',
+    title: 'O Peso do Nosso Amor',
+    author: 'Noah Silva',
+    description: 'Camila jurou nunca mais se apaixonar. Até conhecer Noah, o enfermeiro que cuida de sua avó e que sempre tem um sorriso pronto.\n\nO problema é que os dois carregam traumas profundos — e amar significa enfrentar o passado doloroso que ambos tentam esconder.',
+    cover_url: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=600&fit=crop&auto=format',
+    total_views: 178000,
+    total_chapters: 39,
+    status: 'ongoing',
+    created_at: new Date('2024-06-15').toISOString(),
+    updated_at: new Date('2024-11-18').toISOString(),
+    average_rating: 4.7,
+    categories: [
+      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' }
+    ]
+  },
+
+  // 🔥🔥 7. ROMANCE HOT (+18)
+  {
+    id: 'mock-hot-1',
+    title: 'Prazer Proibido',
+    author: 'Laura Intense',
+    description: 'Laura recebe a missão de entrevistar um renomado empresário. O que ela não espera é que o encontro termine em uma proposta indecente — e impossível de recusar.\n\nEntre desejo, domínio e segredos, Laura descobre um mundo novo… e perigoso.',
+    cover_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop&auto=format',
+    total_views: 312000,
+    total_chapters: 50,
+    status: 'ongoing',
+    created_at: new Date('2024-07-01').toISOString(),
+    updated_at: new Date('2024-11-20').toISOString(),
+    average_rating: 4.9,
+    categories: [
+      { id: 'cat-hot', name: 'Romance Hot', slug: 'hot', description: 'Romance adulto +18' },
+      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' }
+    ]
+  },
+  {
+    id: 'mock-hot-2',
+    title: 'Sob a Luz Vermelha',
+    author: 'Júlia Scarlet',
+    description: 'Cansada da rotina, Júlia visita um clube exclusivo onde todos usam máscaras.\n\nLá conhece um homem misterioso que desperta nela desejos que nunca ousou admitir.\n\nMas quando descobre quem ele realmente é… o jogo muda completamente.',
+    cover_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=600&fit=crop&auto=format',
+    total_views: 289000,
+    total_chapters: 47,
+    status: 'ongoing',
+    created_at: new Date('2024-07-15').toISOString(),
+    updated_at: new Date('2024-11-19').toISOString(),
+    average_rating: 4.8,
+    categories: [
+      { id: 'cat-hot', name: 'Romance Hot', slug: 'hot', description: 'Romance adulto +18' },
+      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' }
+    ]
+  },
+
+  // 🏳️‍🌈 8. LGBTQ+
+  {
+    id: 'mock-lgbtq-1',
+    title: 'Entre Duas Verdades',
+    author: 'Clara Marina',
+    description: 'Clara sempre soube que era diferente. Quando conhece Marina, uma fotógrafa livre e intensa, seu mundo ganha cor — e caos.\n\nMas assumir o romance significa enfrentar sua família conservadora… e seus próprios medos.',
+    cover_url: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=600&fit=crop&auto=format',
+    total_views: 167000,
+    total_chapters: 38,
+    status: 'ongoing',
+    created_at: new Date('2024-08-01').toISOString(),
+    updated_at: new Date('2024-11-18').toISOString(),
+    average_rating: 4.8,
+    categories: [
+      { id: 'cat-lgbtq', name: 'LGBTQ+', slug: 'lgbtq', description: 'Histórias LGBTQ+' },
+      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' }
+    ]
+  },
+  {
+    id: 'mock-lgbtq-2',
+    title: 'Luz e Tempestade',
+    author: 'Lucca Theo',
+    description: 'Depois de anos escondendo sua sexualidade, Lucca finalmente se muda para longe.\n\nLá conhece Theo, um músico sensível que o enxerga como ninguém nunca viu.\n\nMas amar alguém tão quebrado quanto ele pode ser o maior desafio de suas vidas.',
+    cover_url: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=600&fit=crop&auto=format',
+    total_views: 154000,
+    total_chapters: 36,
+    status: 'ongoing',
+    created_at: new Date('2024-08-15').toISOString(),
+    updated_at: new Date('2024-11-17').toISOString(),
+    average_rating: 4.7,
+    categories: [
+      { id: 'cat-lgbtq', name: 'LGBTQ+', slug: 'lgbtq', description: 'Histórias LGBTQ+' },
+      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' }
+    ]
+  },
+
+  // 🔪 9. MISTÉRIO / TERROR
+  {
+    id: 'mock-misterio-1',
+    title: 'A Casa Onde Ninguém Sai',
+    author: 'Grupo dos Cinco',
+    description: 'Quando cinco amigos decidem passar um fim de semana em uma casa abandonada, acham que será divertido.\n\nMas à noite, portas começam a se abrir sozinhas… e uma presença os observa.\n\nUm por um, segredos são revelados — e a casa cobra seu preço.',
+    cover_url: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&h=600&fit=crop&auto=format',
+    total_views: 198000,
+    total_chapters: 40,
+    status: 'ongoing',
+    created_at: new Date('2024-09-01').toISOString(),
+    updated_at: new Date('2024-11-19').toISOString(),
+    average_rating: 4.8,
+    categories: [
+      { id: 'cat-misterio', name: 'Mistério', slug: 'misterio', description: 'Histórias de mistério' },
+      { id: 'cat-terror', name: 'Terror', slug: 'terror', description: 'Histórias de terror' }
+    ]
+  },
+  {
+    id: 'mock-misterio-2',
+    title: 'A Chamada da Meia-Noite',
+    author: 'Camila Dark',
+    description: 'Camila começa a receber ligações de um número desconhecido. Do outro lado, uma criança que implora por ajuda.\n\nQuando tenta rastrear a origem, descobre algo assustador: a criança morreu há anos.\n\nAgora, o espírito quer que Camila descubra quem a matou.',
+    cover_url: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=600&fit=crop&auto=format',
+    total_views: 176000,
+    total_chapters: 38,
+    status: 'ongoing',
+    created_at: new Date('2024-09-15').toISOString(),
+    updated_at: new Date('2024-11-18').toISOString(),
+    average_rating: 4.7,
+    categories: [
+      { id: 'cat-misterio', name: 'Mistério', slug: 'misterio', description: 'Histórias de mistério' },
+      { id: 'cat-terror', name: 'Terror', slug: 'terror', description: 'Histórias de terror' }
+    ]
+  },
+
+  // 🌕 10. LOBISOMEM
+  {
+    id: 'mock-lobisomem-1',
+    title: 'Marcada pelo Alfa Errado',
+    author: 'Elena Moon',
+    description: 'No dia de sua cerimônia de marcação, Elena descobre que seu par destinado não é o futuro alfa que sempre amou… mas seu irmão mais velho, frio e implacável.\n\nAgora ela precisa aprender a viver sob as regras dele — e sob seu toque.',
+    cover_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop&auto=format',
+    total_views: 267000,
+    total_chapters: 46,
+    status: 'ongoing',
+    created_at: new Date('2024-10-01').toISOString(),
+    updated_at: new Date('2024-11-20').toISOString(),
+    average_rating: 4.9,
+    categories: [
+      { id: 'cat-lobisomem', name: 'Lobisomem', slug: 'lobisomem', description: 'Histórias de lobisomens' },
+      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' }
+    ]
+  },
+  {
+    id: 'mock-lobisomem-2',
+    title: 'A Filha da Lua',
+    author: 'Aria Wolfborn',
+    description: 'Rejeitada por sua matilha, Aria foge para as montanhas. Lá encontra um lobisomem solitário que guarda um segredo antigo.\n\nJuntos, eles descobrem que o destino da lua depende dela — e de um amor proibido.',
+    cover_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=600&fit=crop&auto=format',
+    total_views: 234000,
+    total_chapters: 43,
+    status: 'ongoing',
+    created_at: new Date('2024-10-15').toISOString(),
+    updated_at: new Date('2024-11-19').toISOString(),
+    average_rating: 4.8,
+    categories: [
+      { id: 'cat-lobisomem', name: 'Lobisomem', slug: 'lobisomem', description: 'Histórias de lobisomens' },
+      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' }
+    ]
+  },
+
+  // 🧙‍♂️ 11. FANTASIA
+  {
+    id: 'mock-fantasia-1',
+    title: 'A Princesa das Chamas',
+    author: 'Yara Fireborn',
+    description: 'Yara nasceu com o dom proibido de controlar o fogo. Para esconder sua magia, vive confinada no castelo… até que um mago renegado invade o reino e a reconhece como a última de sua linhagem.\n\nAgora, ela precisa decidir entre fugir com ele ou enfrentar o rei que sempre mentiu para ela.',
+    cover_url: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=600&fit=crop&auto=format',
+    total_views: 189000,
+    total_chapters: 40,
+    status: 'ongoing',
+    created_at: new Date('2024-11-01').toISOString(),
+    updated_at: new Date('2024-11-19').toISOString(),
+    average_rating: 4.8,
+    categories: [
+      { id: 'cat-fantasia', name: 'Fantasia', slug: 'fantasia', description: 'Mundos fantásticos' },
+      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' }
+    ]
+  },
+  {
+    id: 'mock-fantasia-2',
+    title: 'O Reino Entre Mundos',
+    author: 'Lina Mirrorborn',
+    description: 'Quando um espelho antigo se quebra, Lina é sugada para um mundo paralelo onde criaturas mágicas vivem em guerra.\n\nLá, um príncipe amaldiçoado acredita que ela é a chave para salvar seu povo — e para quebrar a própria maldição.',
+    cover_url: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=600&fit=crop&auto=format',
+    total_views: 167000,
+    total_chapters: 37,
+    status: 'ongoing',
+    created_at: new Date('2024-11-10').toISOString(),
+    updated_at: new Date('2024-11-18').toISOString(),
+    average_rating: 4.7,
+    categories: [
+      { id: 'cat-fantasia', name: 'Fantasia', slug: 'fantasia', description: 'Mundos fantásticos' },
+      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' }
+    ]
+  },
+
+  // 🎓 12. YA / TEEN
+  {
+    id: 'mock-teen-1',
+    title: 'Cartas Para o Meu Primeiro Amor',
+    author: 'Ana Letters',
+    description: 'Ana encontra uma caixa cheia de cartas que escreveu — mas nunca enviou — para o crush da adolescência.\n\nQuando ele volta para a cidade, ela precisa decidir se vai finalmente revelar seus sentimentos… ou se esconder como sempre fez.',
+    cover_url: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&h=600&fit=crop&auto=format',
+    total_views: 145000,
+    total_chapters: 35,
+    status: 'ongoing',
+    created_at: new Date('2024-08-20').toISOString(),
+    updated_at: new Date('2024-11-18').toISOString(),
+    average_rating: 4.7,
+    categories: [
+      { id: 'cat-teen', name: 'Teen', slug: 'teen', description: 'Histórias jovens' },
+      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' }
+    ]
+  },
+  {
+    id: 'mock-teen-2',
+    title: 'O Garoto do Fim do Corredor',
+    author: 'Júlia Daniel',
+    description: 'Nova na escola, Júlia só quer passar despercebida. Mas tudo muda quando ela conhece Daniel, o garoto misterioso que sempre está sozinho.\n\nAos poucos, eles criam um laço delicado — e perigoso o suficiente para mudar tudo.',
+    cover_url: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=600&fit=crop&auto=format',
+    total_views: 132000,
+    total_chapters: 33,
+    status: 'ongoing',
+    created_at: new Date('2024-09-05').toISOString(),
+    updated_at: new Date('2024-11-17').toISOString(),
+    average_rating: 4.6,
+    categories: [
+      { id: 'cat-teen', name: 'Teen', slug: 'teen', description: 'Histórias jovens' },
+      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' }
+    ]
+  },
+
+  // 👬 13. MM ROMANCE
+  {
+    id: 'mock-mm-1',
+    title: 'Entre Beijos e Segredos',
+    author: 'Miguel Arthur',
+    description: 'Miguel sempre foi dedicado à carreira, até conhecer Arthur, um cliente novo da cafeteria onde trabalha.\n\nO que começa com conversas tímidas se transforma em algo intenso — mas Arthur guarda segredos que podem destruir o que mal começou.',
+    cover_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop&auto=format',
+    total_views: 178000,
+    total_chapters: 39,
+    status: 'ongoing',
+    created_at: new Date('2024-07-20').toISOString(),
+    updated_at: new Date('2024-11-18').toISOString(),
+    average_rating: 4.8,
+    categories: [
+      { id: 'cat-mm', name: 'MM Romance', slug: 'mm', description: 'Romance masculino' },
+      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' }
+    ]
+  },
+  {
+    id: 'mock-mm-2',
+    title: 'Nós Dois Contra o Mundo',
+    author: 'Pedro Lucas',
+    description: 'Após ser expulso de casa, Pedro precisa recomeçar do zero.\n\nEle só não esperava ser acolhido por Lucas, o bad boy da universidade.\n\nEntre convivência forçada, provocações e confissões inesperadas, nasce um romance que nenhum dos dois estava preparado para viver.',
+    cover_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=600&fit=crop&auto=format',
+    total_views: 165000,
+    total_chapters: 37,
+    status: 'ongoing',
+    created_at: new Date('2024-08-05').toISOString(),
+    updated_at: new Date('2024-11-17').toISOString(),
+    average_rating: 4.7,
+    categories: [
+      { id: 'cat-mm', name: 'MM Romance', slug: 'mm', description: 'Romance masculino' },
+      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' }
+    ]
+  },
+
+  // 🩸 14. VAMPIROS
+  {
+    id: 'mock-vampiro-1',
+    title: 'Beijo da Meia-Noite',
+    author: 'Helena Nightborn',
+    description: 'Ao se mudar para uma cidade pequena, Helena conhece um rapaz misterioso que nunca aparece durante o dia.\n\nQuando descobre que ele é um vampiro tentando resistir à sede, já é tarde demais — sua vida está ligada à dele.',
+    cover_url: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=600&fit=crop&auto=format',
+    total_views: 223000,
+    total_chapters: 44,
+    status: 'ongoing',
+    created_at: new Date('2024-09-20').toISOString(),
+    updated_at: new Date('2024-11-19').toISOString(),
+    average_rating: 4.8,
+    categories: [
+      { id: 'cat-vampiro', name: 'Vampiros', slug: 'vampiro', description: 'Histórias de vampiros' },
+      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' }
+    ]
+  },
+  {
+    id: 'mock-vampiro-2',
+    title: 'A Rainha das Sombras',
+    author: 'Kassandra Darkborn',
+    description: 'Kassandra foi transformada contra sua vontade e abandonada à própria sorte.\n\nAgora, séculos depois, está decidida a recuperar o trono vampírico perdido.\n\nMas para isso, terá que se aliar a um guerreiro sombrio que desperta desejos perigosos.',
+    cover_url: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=600&fit=crop&auto=format',
+    total_views: 201000,
+    total_chapters: 42,
+    status: 'ongoing',
+    created_at: new Date('2024-10-05').toISOString(),
+    updated_at: new Date('2024-11-18').toISOString(),
+    average_rating: 4.7,
+    categories: [
+      { id: 'cat-vampiro', name: 'Vampiros', slug: 'vampiro', description: 'Histórias de vampiros' },
+      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor' }
     ]
   }
 ]
