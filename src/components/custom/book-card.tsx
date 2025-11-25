@@ -31,11 +31,10 @@ export default function BookCard({ book, rank, showRank = false }: BookCardProps
           </div>
         )}
 
-        {/* Book Cover - Componente único */}
+        {/* Book Cover - Componente único (sem coverUrl) */}
         <div className="mb-3">
           <BookCover 
-            title={book.title} 
-            coverUrl={book.coverUrl}
+            title={book.title}
             className="group-hover:scale-105 transition-transform duration-300"
           />
         </div>

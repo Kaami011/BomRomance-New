@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { Loader2, Database, CheckCircle2, XCircle, BookOpen, FolderTree } from 'lucide-react'
+import { Loader2, Database, CheckCircle2, XCircle, BookOpen, FolderTree, AlertTriangle } from 'lucide-react'
 
 export default function SeedDatabasePage() {
   const [loading, setLoading] = useState(false)
@@ -11,6 +11,7 @@ export default function SeedDatabasePage() {
     success: boolean
     categoriesCount?: number
     booksCount?: number
+    chaptersCount?: number
     error?: any
   } | null>(null)
   const [logs, setLogs] = useState<string[]>([])
@@ -37,17 +38,17 @@ export default function SeedDatabasePage() {
         addLog('✅ Processo concluído com sucesso!')
         addLog(`📊 ${data.categoriesCount} categorias inseridas`)
         addLog(`📚 ${data.booksCount} livros inseridos`)
-        addLog(`📖 Capítulos completos adicionados`)
+        addLog(`📖 ${data.chaptersCount} capítulos inseridos`)
       } else {
         addLog('❌ Erro durante o processo')
-        addLog(`Detalhes: ${JSON.stringify(data.error)}`)
+        addLog(`Detalhes: ${data.error || 'Erro desconhecido'}`)
       }
       
       setResult(data)
     } catch (error) {
       addLog('❌ Erro fatal ao executar')
       addLog(`Erro: ${error}`)
-      setResult({ success: false, error })
+      setResult({ success: false, error: String(error) })
     } finally {
       setLoading(false)
     }
@@ -133,17 +134,39 @@ export default function SeedDatabasePage() {
                 </h3>
                 {result.success ? (
                   <div className="mt-2 space-y-1 text-sm text-gray-600 dark:text-gray-400">
-                    <p>✅ {result.categoriesCount} categorias inseridas</p>
-                    <p>✅ {result.booksCount} livros inseridos</p>
-                    <p>✅ Capítulos completos adicionados</p>
-                    <p className="mt-3 text-green-600 font-medium">
-                      🎉 Todos os livros estão agora disponíveis no banco de dados!
-                    </p>
+                    <p>✅ {result.categoriesCount || 0} categorias inseridas</p>
+                    <p>✅ {result.booksCount || 0} livros inseridos</p>
+                    <p>✅ {result.chaptersCount || 0} capítulos inseridos</p>
+                    {result.booksCount && result.booksCount > 0 ? (
+                      <p className="mt-3 text-green-600 font-medium">
+                        🎉 Todos os livros estão agora disponíveis no banco de dados!
+                      </p>
+                    ) : (
+                      <p className="mt-3 text-yellow-600 font-medium flex items-center gap-2">
+                        <AlertTriangle className="w-4 h-4" />
+                        Nenhum livro foi inserido. Verifique os logs abaixo.
+                      </p>
+                    )}
                   </div>
                 ) : (
-                  <p className="mt-2 text-sm text-red-600">
-                    {JSON.stringify(result.error)}
-                  </p>
+                  <div className="mt-2 space-y-2">
+                    <p className="text-sm text-red-600 font-medium">
+                      {result.error || 'Erro desconhecido'}
+                    </p>
+                    {result.error && result.error.includes('Credenciais') && (
+                      <div className="mt-3 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                        <p className="text-sm text-yellow-800 dark:text-yellow-200 font-medium mb-2">
+                          ⚠️ Como configurar as credenciais do Supabase:
+                        </p>
+                        <ol className="text-xs text-yellow-700 dark:text-yellow-300 list-decimal list-inside space-y-1">
+                          <li>Acesse seu projeto no Supabase</li>
+                          <li>Vá em Settings → API</li>
+                          <li>Copie a URL do projeto e a chave anon/public</li>
+                          <li>Configure as variáveis de ambiente no seu projeto</li>
+                        </ol>
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
             </div>
@@ -179,6 +202,7 @@ export default function SeedDatabasePage() {
                 <li>Categorias duplicadas serão ignoradas automaticamente</li>
                 <li>Capítulos completos com conteúdo serão inseridos</li>
                 <li>O processo pode levar alguns minutos para completar</li>
+                <li className="text-yellow-700 dark:text-yellow-400 font-medium">⚠️ Certifique-se de que as credenciais do Supabase estão configuradas</li>
               </ul>
             </div>
           </div>

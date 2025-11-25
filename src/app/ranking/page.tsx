@@ -66,7 +66,6 @@ export default function RankingPage() {
                     <div className="mb-4">
                       <BookCover 
                         title={book.title}
-                        coverUrl={book.coverUrl}
                         className="shadow-2xl group-hover:scale-105 transition-transform duration-300"
                       />
                     </div>
@@ -118,7 +117,6 @@ export default function RankingPage() {
                       <div className="flex-shrink-0 w-16">
                         <BookCover 
                           title={book.title}
-                          coverUrl={book.coverUrl}
                           className="group-hover:scale-105 transition-transform duration-300"
                         />
                       </div>

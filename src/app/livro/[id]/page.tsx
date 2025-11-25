@@ -161,7 +161,6 @@ export default function LivroPage() {
                 <div className="mb-4">
                   <BookCover 
                     title={book.title}
-                    coverUrl={book.coverUrl}
                     className="shadow-2xl"
                     showOverlay={false}
                   />

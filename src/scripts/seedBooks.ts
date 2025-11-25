@@ -12,6 +12,28 @@ export async function seedBooksToDatabase() {
   
   console.log('🚀 Iniciando inserção de livros no banco de dados...')
   
+  // Verificar credenciais do Supabase
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+  
+  const hasValidCredentials = 
+    supabaseUrl && 
+    supabaseAnonKey && 
+    supabaseUrl.includes('supabase.co') && 
+    supabaseAnonKey.length > 20
+  
+  if (!hasValidCredentials) {
+    console.error('❌ ERRO: Credenciais do Supabase não configuradas!')
+    console.error('Configure NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY')
+    return {
+      success: false,
+      error: 'Credenciais do Supabase não configuradas. Configure as variáveis de ambiente NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY',
+      categoriesCount: 0,
+      booksCount: 0,
+      chaptersCount: 0
+    }
+  }
+  
   try {
     // 1. Criar categorias únicas primeiro
     const uniqueCategories = new Map<string, any>()
@@ -44,6 +66,24 @@ export async function seedBooksToDatabase() {
       } else {
         console.log(`✅ Categoria inserida: ${category.name}`)
         categoryResults.push({ success: true, name: category.name })
+      }
+    }
+    
+    const successfulCategories = categoryResults.filter(r => r.success).length
+    
+    if (successfulCategories === 0 && uniqueCategories.size > 0) {
+      console.error('❌ ERRO: Nenhuma categoria foi inserida!')
+      console.error('Verifique se as tabelas existem no Supabase e se as credenciais têm permissão de escrita.')
+      return {
+        success: false,
+        error: 'Falha ao inserir categorias. Verifique as permissões do banco de dados.',
+        categoriesCount: 0,
+        booksCount: 0,
+        chaptersCount: 0,
+        details: {
+          categories: categoryResults,
+          books: []
+        }
       }
     }
     
@@ -129,18 +169,33 @@ export async function seedBooksToDatabase() {
       bookResults.push({ success: true, title: book.title, chaptersCount: chapters.length })
     }
     
+    const successfulBooks = bookResults.filter(r => r.success).length
+    const totalChapters = bookResults.reduce((sum, r) => sum + (r.chaptersCount || 0), 0)
+    
     console.log('\n✨ Processo concluído!')
     console.log(`📊 Resumo:`)
-    console.log(`   - ${categoryResults.filter(r => r.success).length}/${uniqueCategories.size} categorias inseridas`)
-    console.log(`   - ${bookResults.filter(r => r.success).length}/${mockBooks.length} livros inseridos`)
-    
-    const totalChapters = bookResults.reduce((sum, r) => sum + (r.chaptersCount || 0), 0)
+    console.log(`   - ${successfulCategories}/${uniqueCategories.size} categorias inseridas`)
+    console.log(`   - ${successfulBooks}/${mockBooks.length} livros inseridos`)
     console.log(`   - ${totalChapters} capítulos inseridos`)
+    
+    if (successfulBooks === 0 && mockBooks.length > 0) {
+      return {
+        success: false,
+        error: 'Nenhum livro foi inserido. Verifique as permissões do banco de dados e se as tabelas existem.',
+        categoriesCount: successfulCategories,
+        booksCount: 0,
+        chaptersCount: 0,
+        details: {
+          categories: categoryResults,
+          books: bookResults
+        }
+      }
+    }
     
     return {
       success: true,
-      categoriesCount: categoryResults.filter(r => r.success).length,
-      booksCount: bookResults.filter(r => r.success).length,
+      categoriesCount: successfulCategories,
+      booksCount: successfulBooks,
       chaptersCount: totalChapters,
       details: {
         categories: categoryResults,
@@ -152,7 +207,10 @@ export async function seedBooksToDatabase() {
     console.error('❌ Erro fatal durante o processo:', error)
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Erro desconhecido'
+      error: error instanceof Error ? error.message : 'Erro desconhecido',
+      categoriesCount: 0,
+      booksCount: 0,
+      chaptersCount: 0
     }
   }
 }
