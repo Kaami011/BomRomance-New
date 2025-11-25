@@ -11,15 +11,12 @@ interface BookCoverProps {
 }
 
 /**
- * Componente único para renderização de capas de livros
+ * Componente único de capa de livro.
  * 
- * 🔴 PADRÃO ÚNICO: Use este componente em TODOS os lugares
- * - Carrega capas estáticas de /public/images/books/
- * - Nome do arquivo baseado no slug do título
- * - Fallback automático para gradiente com inicial
- * - Tratamento de erro de carregamento
- * - Overlay de hover opcional
- * - Tamanho padronizado e responsivo
+ * ✅ Usa SEMPRE imagem estática em /public/images/books
+ * ✅ Mantém proporção de capa de livro
+ * ✅ Tem fallback bonito (gradient), nunca fundo preto "bugado"
+ * ✅ Pode ser reutilizado em todas as páginas (Home, Explorar, Ranking, Livro)
  */
 export function BookCover({
   title,
@@ -30,24 +27,32 @@ export function BookCover({
 
   const staticCoverPath = getBookCoverPathFromTitle(title)
 
+  // Se der erro na imagem, usamos fallback ilustrado
+  const src = hasError ? null : staticCoverPath
+
   return (
     <div
       className={cn(
-        'relative w-full h-[260px] sm:h-[330px] md:h-[400px] overflow-hidden rounded-lg shadow-md bg-black',
+        // base: proporção vertical de livro + visual padrão
+        'relative w-full h-[260px] sm:h-[300px] md:h-[340px] overflow-hidden rounded-xl shadow-md',
+        'bg-gradient-to-br from-[#111827] to-[#020617]',
         className
       )}
     >
-      {!hasError ? (
+      {src && (
         <img
-          src={staticCoverPath}
+          src={src}
           alt={title}
           className="w-full h-full object-cover"
           onError={() => setHasError(true)}
           loading="lazy"
         />
-      ) : (
-        <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#FF2D55] to-[#8B5CF6] p-4">
-          <span className="text-white text-4xl font-bold mb-2">
+      )}
+
+      {/* Fallback visual se a imagem não existir ou falhar */}
+      {(!src || hasError) && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center p-4 bg-gradient-to-br from-[#FF2D55] to-[#8B5CF6]">
+          <span className="text-white text-4xl font-bold mb-2 drop-shadow">
             {title[0]}
           </span>
           <span className="text-white text-xs text-center line-clamp-2">

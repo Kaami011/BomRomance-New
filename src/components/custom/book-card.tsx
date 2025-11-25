@@ -35,7 +35,7 @@ export default function BookCard({ book, rank, showRank = false }: BookCardProps
         <div className="mb-3">
           <BookCover 
             title={book.title}
-            className="group-hover:scale-105 transition-transform duration-300"
+            className="h-[220px] md:h-[260px] group-hover:scale-[1.02] transition-transform duration-300"
           />
         </div>
 
