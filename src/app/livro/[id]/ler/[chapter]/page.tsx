@@ -25,7 +25,7 @@ interface Book {
   id: string
   title: string
   author: string
-  total_chapters: number
+  totalChapters: number
 }
 
 export default function LerCapituloPage() {
@@ -84,7 +84,7 @@ export default function LerCapituloPage() {
             id: mockBook.id,
             title: mockBook.title,
             author: mockBook.author,
-            total_chapters: mockBook.total_chapters
+            totalChapters: mockBook.totalChapters
           })
           setIsMockBook(true)
 
@@ -109,7 +109,12 @@ export default function LerCapituloPage() {
         .single()
 
       if (bookData) {
-        setBook(bookData)
+        setBook({
+          id: bookData.id,
+          title: bookData.title,
+          author: bookData.author,
+          totalChapters: bookData.total_chapters
+        })
         setIsMockBook(false)
 
         // Buscar todos os capítulos (sem conteúdo completo)
@@ -148,7 +153,7 @@ export default function LerCapituloPage() {
             id: mockBook.id,
             title: mockBook.title,
             author: mockBook.author,
-            total_chapters: mockBook.total_chapters
+            totalChapters: mockBook.totalChapters
           })
           setIsMockBook(true)
 
@@ -490,7 +495,7 @@ export default function LerCapituloPage() {
             <div></div>
           )}
 
-          {chapterNumber < book.total_chapters && (
+          {chapterNumber < book.totalChapters && (
             <Link
               href={`/livro/${bookSlug}/ler/${chapterNumber + 1}`}
               className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#FF2D55] to-[#8B5CF6] text-white rounded-lg font-semibold hover:opacity-90 transition ml-auto"
@@ -503,7 +508,7 @@ export default function LerCapituloPage() {
         </div>
 
         {/* Mensagem de fim */}
-        {chapterNumber === book.total_chapters && (
+        {chapterNumber === book.totalChapters && (
           <div className="mt-8 bg-gradient-to-r from-[#FF2D55]/10 to-[#8B5CF6]/10 rounded-2xl p-8 text-center">
             <h3 className="text-xl font-bold text-gray-900 mb-2">
               Você chegou ao último capítulo disponível!
