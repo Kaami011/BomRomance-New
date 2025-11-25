@@ -1,4 +1,4 @@
-import type { Chapter } from '@/lib/supabase'
+import type { Chapter } from '@/lib/types'
 
 // Função auxiliar para gerar conteúdo rico e extenso para cada livro
 function generateChapterContent(bookId: string, chapterNum: number, title: string): string {
@@ -254,8 +254,7 @@ booksConfig.forEach(({ id, chapters: totalChapters }) => {
       content: generateChapterContent(id, chapterNum, title),
       views: Math.floor(Math.random() * 50000) + 10000,
       is_premium: chapterNum > 3,
-      created_at: new Date(2024, 0, 1 + i).toISOString(),
-      updated_at: new Date(2024, 0, 1 + i).toISOString()
+      created_at: new Date(2024, 0, 1 + i).toISOString()
     }
   })
 })
