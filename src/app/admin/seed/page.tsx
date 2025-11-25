@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { Loader2, Database, CheckCircle2, XCircle, BookOpen, FolderTree, AlertTriangle } from 'lucide-react'
+import { Loader2, Database, CheckCircle2, XCircle, BookOpen, FolderTree, AlertTriangle, Settings } from 'lucide-react'
+import Link from 'next/link'
 
 export default function SeedDatabasePage() {
   const [loading, setLoading] = useState(false)
@@ -67,6 +68,29 @@ export default function SeedDatabasePage() {
           </p>
         </div>
 
+        {/* Error Alert - Permissões */}
+        {result && !result.success && result.error?.includes('permissões') && (
+          <Card className="p-6 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-6 h-6 text-red-600 flex-shrink-0" />
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-red-900 dark:text-red-100 mb-2">
+                  ⚠️ Erro de Permissões Detectado
+                </h3>
+                <p className="text-sm text-red-800 dark:text-red-200 mb-4">
+                  O banco de dados precisa ser configurado com as políticas RLS corretas antes de inserir dados.
+                </p>
+                <Link href="/admin/setup-database">
+                  <Button className="bg-red-600 hover:bg-red-700">
+                    <Settings className="w-4 h-4 mr-2" />
+                    Configurar Banco de Dados Agora
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </Card>
+        )}
+
         {/* Action Card */}
         <Card className="p-6 space-y-4">
           <div className="flex items-center gap-3">
@@ -117,6 +141,12 @@ export default function SeedDatabasePage() {
               </>
             )}
           </Button>
+
+          <div className="text-center">
+            <Link href="/admin/setup-database" className="text-sm text-blue-600 hover:underline">
+              Precisa configurar permissões do banco? Clique aqui
+            </Link>
+          </div>
         </Card>
 
         {/* Result Card */}
@@ -153,17 +183,20 @@ export default function SeedDatabasePage() {
                     <p className="text-sm text-red-600 font-medium">
                       {result.error || 'Erro desconhecido'}
                     </p>
-                    {result.error && result.error.includes('Credenciais') && (
+                    {result.error && result.error.includes('permissões') && (
                       <div className="mt-3 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
                         <p className="text-sm text-yellow-800 dark:text-yellow-200 font-medium mb-2">
-                          ⚠️ Como configurar as credenciais do Supabase:
+                          💡 Solução:
                         </p>
-                        <ol className="text-xs text-yellow-700 dark:text-yellow-300 list-decimal list-inside space-y-1">
-                          <li>Acesse seu projeto no Supabase</li>
-                          <li>Vá em Settings → API</li>
-                          <li>Copie a URL do projeto e a chave anon/public</li>
-                          <li>Configure as variáveis de ambiente no seu projeto</li>
-                        </ol>
+                        <p className="text-xs text-yellow-700 dark:text-yellow-300 mb-2">
+                          O banco de dados precisa ter as políticas RLS configuradas.
+                        </p>
+                        <Link href="/admin/setup-database">
+                          <Button size="sm" variant="outline" className="border-yellow-600 text-yellow-700 hover:bg-yellow-100">
+                            <Settings className="w-3 h-3 mr-2" />
+                            Ir para Configuração
+                          </Button>
+                        </Link>
                       </div>
                     )}
                   </div>
@@ -202,7 +235,7 @@ export default function SeedDatabasePage() {
                 <li>Categorias duplicadas serão ignoradas automaticamente</li>
                 <li>Capítulos completos com conteúdo serão inseridos</li>
                 <li>O processo pode levar alguns minutos para completar</li>
-                <li className="text-yellow-700 dark:text-yellow-400 font-medium">⚠️ Certifique-se de que as credenciais do Supabase estão configuradas</li>
+                <li className="text-yellow-700 dark:text-yellow-400 font-medium">⚠️ Se aparecer erro de permissões, configure o banco primeiro</li>
               </ul>
             </div>
           </div>
