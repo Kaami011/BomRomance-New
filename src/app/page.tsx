@@ -18,7 +18,6 @@ export default function Home() {
     async function loadBooks() {
       setLoading(true)
       
-      // Carregar diferentes seções
       const [trending, rising, popular, recent] = await Promise.all([
         searchBooks({ sortBy: 'trending', limit: 6 }),
         searchBooks({ sortBy: 'views', limit: 6 }),
@@ -46,7 +45,6 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-white">
-      {/* Hero Banner */}
       <section className="relative bg-gradient-to-r from-[#FF2D55] to-[#8B5CF6] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
           <div className="max-w-3xl">
@@ -73,7 +71,6 @@ export default function Home() {
           </div>
         </div>
         
-        {/* Decorative wave */}
         <div className="absolute bottom-0 left-0 right-0">
           <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M0 120L60 105C120 90 240 60 360 45C480 30 600 30 720 37.5C840 45 960 60 1080 67.5C1200 75 1320 75 1380 75L1440 75V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="white"/>
@@ -81,7 +78,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Trending Section */}
       {trendingBooks.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="flex items-center justify-between mb-6">
@@ -103,7 +99,6 @@ export default function Home() {
         </section>
       )}
 
-      {/* Rising Section */}
       {risingBooks.length > 0 && (
         <section className="bg-gray-50 py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -127,7 +122,6 @@ export default function Home() {
         </section>
       )}
 
-      {/* Popular Section */}
       {popularBooks.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="flex items-center justify-between mb-6">
@@ -149,7 +143,6 @@ export default function Home() {
         </section>
       )}
 
-      {/* Recent Updates */}
       {recentBooks.length > 0 && (
         <section className="bg-gray-50 py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -173,7 +166,6 @@ export default function Home() {
         </section>
       )}
 
-      {/* Empty State */}
       {!loading && trendingBooks.length === 0 && risingBooks.length === 0 && popularBooks.length === 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Nenhum livro disponível ainda</h2>
@@ -181,7 +173,6 @@ export default function Home() {
         </section>
       )}
 
-      {/* CTA Section */}
       <section className="bg-gradient-to-r from-[#FF2D55] to-[#8B5CF6] text-white py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
