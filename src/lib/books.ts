@@ -7,6 +7,8 @@
 
 import { createClient } from './supabase-client'
 import type { Book, BookRow, Category } from './types'
+import { getMockBooks, getMockBooksByCategory, searchMockBooks } from '@/data/mockBooks'
+import { getMockChapters } from '@/data/mockChapters'
 
 /**
  * Normaliza uma linha do Supabase para o formato Book padrão
@@ -45,6 +47,7 @@ export function normalizeBook(row: BookRow): Book {
 
 /**
  * Busca livros com filtros e ordenação
+ * Combina dados do Supabase com dados mockados
  */
 export async function searchBooks(params: {
   query?: string
@@ -94,13 +97,8 @@ export async function searchBooks(params: {
 
   const { data, error } = await queryBuilder.range(offset, offset + limit - 1)
 
-  if (error) {
-    console.error('Erro ao buscar livros:', error)
-    return { books: [], error }
-  }
-
-  // Processar dados e calcular média de rating
-  const books: Book[] = (data || []).map((book: any) => {
+  // Processar dados do Supabase
+  const supabaseBooks: Book[] = (data || []).map((book: any) => {
     const reviews = book.reviews || []
     const totalRating = reviews.reduce((sum: number, r: any) => sum + (r.rating || 0), 0)
     const averageRating = reviews.length > 0 ? totalRating / reviews.length : 0
@@ -114,7 +112,40 @@ export async function searchBooks(params: {
     })
   })
 
-  return { books, error: null }
+  // Buscar dados mockados
+  let mockBooks: Book[] = []
+  
+  if (query) {
+    mockBooks = searchMockBooks(query)
+  } else if (categorySlug) {
+    mockBooks = getMockBooksByCategory(categorySlug)
+  } else {
+    mockBooks = getMockBooks()
+  }
+
+  // Ordenar dados mockados
+  switch (sortBy) {
+    case 'views':
+      mockBooks.sort((a, b) => b.totalViews - a.totalViews)
+      break
+    case 'rating':
+      mockBooks.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0))
+      break
+    case 'recent':
+      mockBooks.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+      break
+    case 'trending':
+      mockBooks.sort((a, b) => b.totalViews - a.totalViews)
+      break
+  }
+
+  // Combinar livros do Supabase com mockados
+  const allBooks = [...supabaseBooks, ...mockBooks]
+  
+  // Aplicar paginação
+  const paginatedBooks = allBooks.slice(offset, offset + limit)
+
+  return { books: paginatedBooks, error: null }
 }
 
 /**
@@ -135,13 +166,8 @@ export async function getRankingBooks(limit = 50): Promise<{ books: (Book & { ra
     .order('total_views', { ascending: false })
     .limit(limit)
 
-  if (error) {
-    console.error('Erro ao buscar ranking:', error)
-    return { books: [], error }
-  }
-
-  // Calcular score de ranking: views + (rating * 100000)
-  const books = (data || []).map((book: any) => {
+  // Processar dados do Supabase
+  const supabaseBooks = (data || []).map((book: any) => {
     const reviews = book.reviews || []
     const totalRating = reviews.reduce((sum: number, r: any) => sum + (r.rating || 0), 0)
     const averageRating = reviews.length > 0 ? totalRating / reviews.length : 0
@@ -163,14 +189,25 @@ export async function getRankingBooks(limit = 50): Promise<{ books: (Book & { ra
     }
   })
 
-  // Ordenar por ranking score
-  books.sort((a, b) => b.rankingScore - a.rankingScore)
+  // Adicionar livros mockados
+  const mockBooks = getMockBooks().map(book => ({
+    ...book,
+    rankingScore: book.totalViews + ((book.averageRating || 0) * 100000)
+  }))
 
-  return { books, error: null }
+  // Combinar e ordenar
+  const allBooks = [...supabaseBooks, ...mockBooks]
+  allBooks.sort((a, b) => b.rankingScore - a.rankingScore)
+
+  // Limitar resultado
+  const limitedBooks = allBooks.slice(0, limit)
+
+  return { books: limitedBooks, error: null }
 }
 
 /**
  * Busca livro por ID com detalhes completos
+ * Suporta livros mockados (IDs começando com "mock-")
  */
 export async function getBookById(bookId: string): Promise<{ 
   book: Book | null
@@ -178,9 +215,33 @@ export async function getBookById(bookId: string): Promise<{
   chapters: any[]
   error: any 
 }> {
-  // Se o ID começa com "mock-", não buscar no Supabase
-  if (bookId.startsWith('mock-') || bookId.includes('mock-book-')) {
-    return { book: null, reviews: [], chapters: [], error: null }
+  // Se o ID começa com "mock-", buscar nos dados mockados
+  if (bookId.startsWith('mock-')) {
+    const { getMockBookById } = await import('@/data/mockBooks')
+    const book = getMockBookById(bookId)
+    
+    if (!book) {
+      return { book: null, reviews: [], chapters: [], error: 'Livro não encontrado' }
+    }
+
+    const chapters = getMockChapters(bookId)
+    
+    return { 
+      book, 
+      reviews: [], 
+      chapters: chapters.map(ch => ({
+        id: ch.id,
+        book_id: ch.book_id,
+        chapter_number: ch.chapter_number,
+        title: ch.title,
+        views: ch.views,
+        preview_text: ch.content.substring(0, 200),
+        content_storage_path: null,
+        created_at: ch.created_at,
+        is_premium: ch.is_premium
+      })), 
+      error: null 
+    }
   }
 
   const supabase = createClient()
@@ -238,7 +299,7 @@ export async function getBookById(bookId: string): Promise<{
  */
 export async function incrementBookViews(bookId: string): Promise<void> {
   // Se o ID começa com "mock-", não incrementar no Supabase
-  if (bookId.startsWith('mock-') || bookId.includes('mock-book-')) {
+  if (bookId.startsWith('mock-')) {
     return
   }
 
