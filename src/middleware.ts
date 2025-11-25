@@ -4,10 +4,10 @@ import type { NextRequest } from 'next/server'
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // 🔓 Deixa /admin/migrate livre (sem exigir login)
-  if (pathname === '/admin/migrate') {
-    return NextResponse.next()
-  }
+ // 🔓 Deixa /admin/migrate e /admin/seed livres (sem exigir login)
+if (pathname === '/admin/migrate' || pathname === '/admin/seed') {
+  return NextResponse.next()
+}
 
   // 🔒 Continua protegendo o resto do /admin
   if (pathname.startsWith('/admin')) {
