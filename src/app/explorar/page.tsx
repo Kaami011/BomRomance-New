@@ -62,7 +62,7 @@ export default function ExplorarPage() {
           author: mockBook.author,
           slug: mockBook.slug || mockBook.id,
           description: mockBook.description || null,
-          cover_url: mockBook.cover_url || null,  // 🔴 Usar cover_url
+          cover_url: null, // ✅ Sempre null - usa getBookCoverPathFromTitle(title)
           total_views: mockBook.total_views || 0,
           total_chapters: mockBook.total_chapters || 0,
           status: mockBook.status || 'ongoing',

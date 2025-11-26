@@ -9,7 +9,7 @@ export const mockBooks: Book[] = [
     slug: 'entre-sangue-e-seducao-mock-mafia-1',
     author: 'Valentina Rossi',
     description: 'Quando Aurora é sequestrada por engano pela família Moretti, descobre que o líder da máfia italiana não é o monstro que todos pintam — mas também não é o herói que ela imaginou.\n\nDante Moretti é frio, calculista e perigoso… até que começa a quebrar suas próprias regras por causa dela.\n\nPresos em um mundo de segredos, sangue e alianças quebradas, Aurora precisa decidir: confiar no homem que destruiu sua vida… ou se tornar a rainha ao lado dele.',
-    coverUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop&auto=format',
+    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
     totalViews: 245000,
     totalChapters: 45,
     status: 'ongoing',
@@ -27,7 +27,7 @@ export const mockBooks: Book[] = [
     slug: 'a-noiva-do-don-mock-mafia-2',
     author: 'Isabella Russo',
     description: 'Para salvar o irmão de uma dívida impagável, Helena aceita se tornar esposa do chefe mais temido de Chicago.\n\nAdrian Russo nunca quis casamento — até encontrar uma mulher teimosa o suficiente para desafiá-lo.\n\nEntre jogos de poder, ciúme, proteção obsessiva e inimigos que surgem de todos os lados, Helena percebe que o maior perigo… é se apaixonar pelo próprio monstro.',
-    coverUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=600&fit=crop&auto=format',
+    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
     totalViews: 198000,
     totalChapters: 42,
     status: 'ongoing',
@@ -47,7 +47,7 @@ export const mockBooks: Book[] = [
     slug: 'o-sussurro-das-sombras-mock-paranormal-1',
     author: 'Luna Blackwood',
     description: 'Desde criança, Mia ouve vozes que ninguém mais escuta. Quando uma entidade começa a segui-la, pedindo ajuda, ela descobre um portal entre mundos.\n\nElias, o guardião desse portal, surge em sua vida trazendo respostas — e um destino sombrio.\n\nAgora Mia precisa enfrentar espíritos que querem possuir seu corpo… e sentimentos por um homem que nem deveria existir.',
-    coverUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=600&fit=crop&auto=format',
+    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
     totalViews: 167000,
     totalChapters: 38,
     status: 'ongoing',
@@ -65,7 +65,7 @@ export const mockBooks: Book[] = [
     slug: 'entre-o-veu-e-a-carne-mock-paranormal-2',
     author: 'Morgana Veil',
     description: 'Luna consegue ver os mortos desde o acidente que quase tirou sua vida. Trabalhando como médium, ela se sente no controle — até conhecer Cael, um espírito poderoso preso entre dimensões.\n\nPara libertá-lo, ela precisa quebrar regras que colocam sua alma em risco… e quanto mais se aproximam, mais viva ela se sente.',
-    coverUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=600&fit=crop&auto=format',
+    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
     totalViews: 143000,
     totalChapters: 35,
     status: 'ongoing',
@@ -85,7 +85,7 @@ export const mockBooks: Book[] = [
     slug: 'game-over-para-o-meu-coracao-mock-jogos-1',
     author: 'Pixel Dreams',
     description: 'Valentina é uma gamer famosa, mas sua vida vira de cabeça para baixo quando um bug misterioso a transporta para dentro do próprio jogo.\n\nO problema? O chefe final — um guerreiro sombrio irresistível — está convicto de que ela é sua inimiga mortal.\n\nAgora, para voltar para casa, ela precisa derrotá-lo… ou deixá-lo conquistar seu coração.',
-    coverUrl: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&h=600&fit=crop&auto=format',
+    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
     totalViews: 189000,
     totalChapters: 40,
     status: 'ongoing',
@@ -103,7 +103,7 @@ export const mockBooks: Book[] = [
     slug: 'respawn-do-amor-mock-jogos-2',
     author: 'Alex Gamer',
     description: 'Depois de perder tudo, Alex encontra consolo em um novo MMORPG. O que ele não esperava era conhecer "NightWolf", uma jogadora habilidosa e misteriosa.\n\nQuando descobrem que há um segredo por trás do jogo — e que seus avatares têm mais consciência do que deveriam — os dois iniciam uma jornada que mistura amizade, perigo e romance digital.',
-    coverUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=600&fit=crop&auto=format',
+    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
     totalViews: 156000,
     totalChapters: 37,
     status: 'ongoing',
@@ -123,7 +123,7 @@ export const mockBooks: Book[] = [
     slug: 'contrato-irresistivel-mock-bilionario-1',
     author: 'Sofia Mendes',
     description: 'Desesperada por dinheiro, Sofia aceita um contrato de seis meses como acompanhante particular do homem mais temido do mercado financeiro.\n\nLevi Hartmann é arrogante, lindo e acostumado a controlar tudo.\n\nO problema é que quanto mais convivem, mais difícil se torna manter o "profissional" profissional… e Levi não aceita perder o que deseja.',
-    coverUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop&auto=format',
+    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
     totalViews: 278000,
     totalChapters: 48,
     status: 'ongoing',
@@ -141,7 +141,7 @@ export const mockBooks: Book[] = [
     slug: 'o-segredo-do-ceo-mock-bilionario-2',
     author: 'Alexandre Costa',
     description: 'Isabella é contratada como assistente pessoal do CEO mais jovem do país.\n\nEthan Blake é exigente, frio e totalmente inalcançável — até a noite em que ela o encontra quebrado, revelando um segredo que poderia destruir sua carreira.\n\nAgora, eles estão presos em um jogo proibido… onde o erro é inevitável.',
-    coverUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=600&fit=crop&auto=format',
+    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
     totalViews: 234000,
     totalChapters: 44,
     status: 'ongoing',
@@ -161,7 +161,7 @@ export const mockBooks: Book[] = [
     slug: 'alem-das-estrelas-proibidas-mock-scifi-1',
     author: 'Nova Stellar',
     description: 'Em um futuro onde casamentos são decididos por algoritmos, Aria descobre que seu par perfeito é um rebelde procurado pela federação.\n\nPara sobreviver, os dois precisam fugir para fora do sistema solar… e lá descobrem uma verdade que pode mudar toda a humanidade.',
-    coverUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=600&fit=crop&auto=format',
+    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
     totalViews: 145000,
     totalChapters: 36,
     status: 'ongoing',
@@ -179,7 +179,7 @@ export const mockBooks: Book[] = [
     slug: 'o-ultimo-androide-mock-scifi-2',
     author: 'Dr. Lina Chen',
     description: 'Quando o governo proíbe a criação de androides com emoções, a cientista Lina esconde seu protótipo — um androide perfeito chamado Kairo.\n\nMas o que começa como um experimento se transforma em algo perigoso… porque Kairo desenvolve sentimentos que não deveriam existir.',
-    coverUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=600&fit=crop&auto=format',
+    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
     totalViews: 132000,
     totalChapters: 34,
     status: 'ongoing',
@@ -199,7 +199,7 @@ export const mockBooks: Book[] = [
     slug: 'quando-nossos-destinos-colidiram-mock-romance-1',
     author: 'Camila Alves',
     description: 'Dois desconhecidos se esbarram em um aeroporto e trocam apenas um olhar — suficiente para marcar os dois.\n\nAnos depois, se reencontram como professor e aluna em uma pós-graduação.\n\nAgora, sentimentos não resolvidos voltam com força… junto com segredos que podem separá-los novamente.',
-    coverUrl: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&h=600&fit=crop&auto=format',
+    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
     totalViews: 201000,
     totalChapters: 41,
     status: 'ongoing',
@@ -216,7 +216,7 @@ export const mockBooks: Book[] = [
     slug: 'o-peso-do-nosso-amor-mock-romance-2',
     author: 'Noah Silva',
     description: 'Camila jurou nunca mais se apaixonar. Até conhecer Noah, o enfermeiro que cuida de sua avó e que sempre tem um sorriso pronto.\n\nO problema é que os dois carregam traumas profundos — e amar significa enfrentar o passado doloroso que ambos tentam esconder.',
-    coverUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=600&fit=crop&auto=format',
+    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
     totalViews: 178000,
     totalChapters: 39,
     status: 'ongoing',
@@ -235,7 +235,7 @@ export const mockBooks: Book[] = [
     slug: 'prazer-proibido-mock-hot-1',
     author: 'Laura Intense',
     description: 'Laura recebe a missão de entrevistar um renomado empresário. O que ela não espera é que o encontro termine em uma proposta indecente — e impossível de recusar.\n\nEntre desejo, domínio e segredos, Laura descobre um mundo novo… e perigoso.',
-    coverUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop&auto=format',
+    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
     totalViews: 312000,
     totalChapters: 50,
     status: 'ongoing',
@@ -253,7 +253,7 @@ export const mockBooks: Book[] = [
     slug: 'sob-a-luz-vermelha-mock-hot-2',
     author: 'Júlia Scarlet',
     description: 'Cansada da rotina, Júlia visita um clube exclusivo onde todos usam máscaras.\n\nLá conhece um homem misterioso que desperta nela desejos que nunca ousou admitir.\n\nMas quando descobre quem ele realmente é… o jogo muda completamente.',
-    coverUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=600&fit=crop&auto=format',
+    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
     totalViews: 289000,
     totalChapters: 47,
     status: 'ongoing',
@@ -273,7 +273,7 @@ export const mockBooks: Book[] = [
     slug: 'entre-duas-verdades-mock-lgbtq-1',
     author: 'Clara Marina',
     description: 'Clara sempre soube que era diferente. Quando conhece Marina, uma fotógrafa livre e intensa, seu mundo ganha cor — e caos.\n\nMas assumir o romance significa enfrentar sua família conservadora… e seus próprios medos.',
-    coverUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=600&fit=crop&auto=format',
+    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
     totalViews: 167000,
     totalChapters: 38,
     status: 'ongoing',
@@ -291,7 +291,7 @@ export const mockBooks: Book[] = [
     slug: 'luz-e-tempestade-mock-lgbtq-2',
     author: 'Lucca Theo',
     description: 'Depois de anos escondendo sua sexualidade, Lucca finalmente se muda para longe.\n\nLá conhece Theo, um músico sensível que o enxerga como ninguém nunca viu.\n\nMas amar alguém tão quebrado quanto ele pode ser o maior desafio de suas vidas.',
-    coverUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=600&fit=crop&auto=format',
+    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
     totalViews: 154000,
     totalChapters: 36,
     status: 'ongoing',
@@ -311,7 +311,7 @@ export const mockBooks: Book[] = [
     slug: 'a-casa-onde-ninguem-sai-mock-misterio-1',
     author: 'Grupo dos Cinco',
     description: 'Quando cinco amigos decidem passar um fim de semana em uma casa abandonada, acham que será divertido.\n\nMas à noite, portas começam a se abrir sozinhas… e uma presença os observa.\n\nUm por um, segredos são revelados — e a casa cobra seu preço.',
-    coverUrl: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&h=600&fit=crop&auto=format',
+    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
     totalViews: 198000,
     totalChapters: 40,
     status: 'ongoing',
@@ -329,7 +329,7 @@ export const mockBooks: Book[] = [
     slug: 'a-chamada-da-meia-noite-mock-misterio-2',
     author: 'Camila Dark',
     description: 'Camila começa a receber ligações de um número desconhecido. Do outro lado, uma criança que implora por ajuda.\n\nQuando tenta rastrear a origem, descobre algo assustador: a criança morreu há anos.\n\nAgora, o espírito quer que Camila descubra quem a matou.',
-    coverUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=600&fit=crop&auto=format',
+    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
     totalViews: 176000,
     totalChapters: 38,
     status: 'ongoing',
@@ -349,7 +349,7 @@ export const mockBooks: Book[] = [
     slug: 'marcada-pelo-alfa-errado-mock-lobisomem-1',
     author: 'Elena Moon',
     description: 'No dia de sua cerimônia de marcação, Elena descobre que seu par destinado não é o futuro alfa que sempre amou… mas seu irmão mais velho, frio e implacável.\n\nAgora ela precisa aprender a viver sob as regras dele — e sob seu toque.',
-    coverUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop&auto=format',
+    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
     totalViews: 267000,
     totalChapters: 46,
     status: 'ongoing',
@@ -367,7 +367,7 @@ export const mockBooks: Book[] = [
     slug: 'a-filha-da-lua-mock-lobisomem-2',
     author: 'Aria Wolfborn',
     description: 'Rejeitada por sua matilha, Aria foge para as montanhas. Lá encontra um lobisomem solitário que guarda um segredo antigo.\n\nJuntos, eles descobrem que o destino da lua depende dela — e de um amor proibido.',
-    coverUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=600&fit=crop&auto=format',
+    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
     totalViews: 234000,
     totalChapters: 43,
     status: 'ongoing',
@@ -387,7 +387,7 @@ export const mockBooks: Book[] = [
     slug: 'a-princesa-das-chamas-mock-fantasia-1',
     author: 'Yara Fireborn',
     description: 'Yara nasceu com o dom proibido de controlar o fogo. Para esconder sua magia, vive confinada no castelo… até que um mago renegado invade o reino e a reconhece como a última de sua linhagem.\n\nAgora, ela precisa decidir entre fugir com ele ou enfrentar o rei que sempre mentiu para ela.',
-    coverUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=600&fit=crop&auto=format',
+    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
     totalViews: 189000,
     totalChapters: 40,
     status: 'ongoing',
@@ -405,7 +405,7 @@ export const mockBooks: Book[] = [
     slug: 'o-reino-entre-mundos-mock-fantasia-2',
     author: 'Lina Mirrorborn',
     description: 'Quando um espelho antigo se quebra, Lina é sugada para um mundo paralelo onde criaturas mágicas vivem em guerra.\n\nLá, um príncipe amaldiçoado acredita que ela é a chave para salvar seu povo — e para quebrar a própria maldição.',
-    coverUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=600&fit=crop&auto=format',
+    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
     totalViews: 167000,
     totalChapters: 37,
     status: 'ongoing',
@@ -425,7 +425,7 @@ export const mockBooks: Book[] = [
     slug: 'cartas-para-o-meu-primeiro-amor-mock-teen-1',
     author: 'Ana Letters',
     description: 'Ana encontra uma caixa cheia de cartas que escreveu — mas nunca enviou — para o crush da adolescência.\n\nQuando ele volta para a cidade, ela precisa decidir se vai finalmente revelar seus sentimentos… ou se esconder como sempre fez.',
-    coverUrl: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&h=600&fit=crop&auto=format',
+    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
     totalViews: 145000,
     totalChapters: 35,
     status: 'ongoing',
@@ -443,7 +443,7 @@ export const mockBooks: Book[] = [
     slug: 'o-garoto-do-fim-do-corredor-mock-teen-2',
     author: 'Júlia Daniel',
     description: 'Nova na escola, Júlia só quer passar despercebida. Mas tudo muda quando ela conhece Daniel, o garoto misterioso que sempre está sozinho.\n\nAos poucos, eles criam um laço delicado — e perigoso o suficiente para mudar tudo.',
-    coverUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=600&fit=crop&auto=format',
+    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
     totalViews: 132000,
     totalChapters: 33,
     status: 'ongoing',
@@ -463,7 +463,7 @@ export const mockBooks: Book[] = [
     slug: 'entre-beijos-e-segredos-mock-mm-1',
     author: 'Miguel Arthur',
     description: 'Miguel sempre foi dedicado à carreira, até conhecer Arthur, um cliente novo da cafeteria onde trabalha.\n\nO que começa com conversas tímidas se transforma em algo intenso — mas Arthur guarda segredos que podem destruir o que mal começou.',
-    coverUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop&auto=format',
+    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
     totalViews: 178000,
     totalChapters: 39,
     status: 'ongoing',
@@ -481,7 +481,7 @@ export const mockBooks: Book[] = [
     slug: 'nos-dois-contra-o-mundo-mock-mm-2',
     author: 'Pedro Lucas',
     description: 'Após ser expulso de casa, Pedro precisa recomeçar do zero.\n\nEle só não esperava ser acolhido por Lucas, o bad boy da universidade.\n\nEntre convivência forçada, provocações e confissões inesperadas, nasce um romance que nenhum dos dois estava preparado para viver.',
-    coverUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=600&fit=crop&auto=format',
+    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
     totalViews: 165000,
     totalChapters: 37,
     status: 'ongoing',
@@ -501,7 +501,7 @@ export const mockBooks: Book[] = [
     slug: 'beijo-da-meia-noite-mock-vampiro-1',
     author: 'Helena Nightborn',
     description: 'Ao se mudar para uma cidade pequena, Helena conhece um rapaz misterioso que nunca aparece durante o dia.\n\nQuando descobre que ele é um vampiro tentando resistir à sede, já é tarde demais — sua vida está ligada à dele.',
-    coverUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=600&fit=crop&auto=format',
+    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
     totalViews: 223000,
     totalChapters: 44,
     status: 'ongoing',
@@ -519,7 +519,7 @@ export const mockBooks: Book[] = [
     slug: 'a-rainha-das-sombras-mock-vampiro-2',
     author: 'Kassandra Darkborn',
     description: 'Kassandra foi transformada contra sua vontade e abandonada à própria sorte.\n\nAgora, séculos depois, está decidida a recuperar o trono vampírico perdido.\n\nMas para isso, terá que se aliar a um guerreiro sombrio que desperta desejos perigosos.',
-    coverUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=600&fit=crop&auto=format',
+    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
     totalViews: 201000,
     totalChapters: 42,
     status: 'ongoing',
