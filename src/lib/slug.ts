@@ -27,7 +27,7 @@ export function generateSlug(title: string): string {
  * @param title - Título do livro
  * @returns Caminho da imagem (ex: /images/books/desejo-proibido.jpg)
  */
-export function getBookCoverPathFromTitle(title: string): string {
+export function getBookCoverPath(title: string, ext: string): string {
   const slug = generateSlug(title)
-  return `/images/books/${slug}.jpg`
+  return `/images/books/${slug}.${ext}`
 }
