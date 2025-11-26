@@ -30,7 +30,7 @@ export default function Footer() {
             <div className="space-y-6">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-xl">BRR</span>
+                  <span className="text-white font-bold text-xl"></span>
                 </div>
                 <span className="text-white font-bold text-xl">Bom Romance</span>
               </div>
