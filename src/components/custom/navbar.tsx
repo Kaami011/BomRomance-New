@@ -50,6 +50,7 @@ export default function Navbar() {
   const handleLogout = async () => {
     await supabase.auth.signOut()
     setIsProfileOpen(false)
+    setIsMenuOpen(false)
     router.push('/')
   }
 
@@ -59,7 +60,13 @@ export default function Navbar() {
       router.push(`/explorar?busca=${encodeURIComponent(searchQuery)}`)
       setSearchQuery('')
       setIsSearchOpen(false)
+      setIsMenuOpen(false)
     }
+  }
+
+  const handleMenuItemClick = () => {
+    setIsMenuOpen(false)
+    setIsProfileOpen(false)
   }
 
   const getPlanName = (planType?: string | null) => {
@@ -82,7 +89,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 flex-shrink-0">
+          <Link href="/" className="flex items-center gap-2 flex-shrink-0" onClick={handleMenuItemClick}>
             <Image 
               src="https://k6hrqrxuu8obbfwn.public.blob.vercel-storage.com/temp/b2fad407-19b0-49d7-aacd-17b2f99bef8a.png" 
               alt="Bom Romance Logo" 
@@ -285,7 +292,11 @@ export default function Navbar() {
       {isMenuOpen && (
         <div className="md:hidden border-t border-gray-200 bg-white">
           <div className="px-4 py-4 space-y-3">
-            <Link href="/" className="block text-gray-700 hover:text-[#FF2D55] transition">
+            <Link 
+              href="/" 
+              className="block text-gray-700 hover:text-[#FF2D55] transition"
+              onClick={handleMenuItemClick}
+            >
               Início
             </Link>
             
@@ -297,6 +308,7 @@ export default function Navbar() {
                     key={category.slug}
                     href={`/categoria/${category.slug}`}
                     className="block text-sm text-gray-700 hover:text-[#FF2D55] transition"
+                    onClick={handleMenuItemClick}
                   >
                     {category.name}
                   </Link>
@@ -304,11 +316,19 @@ export default function Navbar() {
               </div>
             </div>
 
-            <Link href="/ranking" className="block text-gray-700 hover:text-[#FF2D55] transition">
+            <Link 
+              href="/ranking" 
+              className="block text-gray-700 hover:text-[#FF2D55] transition"
+              onClick={handleMenuItemClick}
+            >
               Ranking
             </Link>
             
-            <Link href="/explorar" className="block text-gray-700 hover:text-[#FF2D55] transition">
+            <Link 
+              href="/explorar" 
+              className="block text-gray-700 hover:text-[#FF2D55] transition"
+              onClick={handleMenuItemClick}
+            >
               Explorar
             </Link>
 
@@ -316,16 +336,25 @@ export default function Navbar() {
               <Link 
                 href="/login" 
                 className="block bg-[#FF2D55] text-white px-6 py-2 rounded-lg hover:bg-[#E0254A] transition text-center"
+                onClick={handleMenuItemClick}
               >
                 Entrar
               </Link>
             ) : (
               <>
-                <Link href="/minhas-leituras" className="block text-gray-700 hover:text-[#FF2D55] transition">
+                <Link 
+                  href="/minhas-leituras" 
+                  className="block text-gray-700 hover:text-[#FF2D55] transition"
+                  onClick={handleMenuItemClick}
+                >
                   Minhas Leituras
                 </Link>
                 {!hasActiveSubscription && (
-                  <Link href="/assinatura" className="block text-[#FF2D55] hover:text-[#E0254A] transition font-semibold">
+                  <Link 
+                    href="/assinatura" 
+                    className="block text-[#FF2D55] hover:text-[#E0254A] transition font-semibold"
+                    onClick={handleMenuItemClick}
+                  >
                     Assinar Agora
                   </Link>
                 )}
@@ -369,7 +398,7 @@ export default function Navbar() {
 
             <Link
               href="/minhas-leituras"
-              onClick={() => setIsProfileOpen(false)}
+              onClick={handleMenuItemClick}
               className="flex items-center text-gray-700 hover:text-[#FF2D55] transition"
             >
               <BookOpen className="w-4 h-4 mr-2" />
@@ -379,7 +408,7 @@ export default function Navbar() {
             {!hasActiveSubscription && (
               <Link
                 href="/assinatura"
-                onClick={() => setIsProfileOpen(false)}
+                onClick={handleMenuItemClick}
                 className="flex items-center text-[#FF2D55] hover:text-[#E0254A] transition font-semibold"
               >
                 <Crown className="w-4 h-4 mr-2" />

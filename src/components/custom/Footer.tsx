@@ -30,7 +30,7 @@ export default function Footer() {
             <div className="space-y-6">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-xl"></span>
+                  <span className="text-white font-bold text-xl">BR</span>
                 </div>
                 <span className="text-white font-bold text-xl">Bom Romance</span>
               </div>
@@ -39,14 +39,14 @@ export default function Footer() {
                 <p className="text-sm font-semibold mb-3">Siga-nos:</p>
                 <div className="flex gap-4">
                   <Link
-                    href="https://www.facebook.com/people/Bom-Romance/61583384859120/"
+                    href="https://facebook.com"
                     target="_blank"
                     className="w-9 h-9 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
                   >
                     <Facebook className="w-5 h-5" />
                   </Link>
                   <Link
-                    href="https://www.tiktok.com/@bomromance?_r=1&_t=ZS-91fycgdFhg4"
+                    href="https://tiktok.com"
                     target="_blank"
                     className="w-9 h-9 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
                   >
@@ -55,14 +55,14 @@ export default function Footer() {
                     </svg>
                   </Link>
                   <Link
-                    href="https://www.instagram.com/bomromance_?igsh=MTQ2YjQyOW00ZmZoaw%3D%3D&utm_source=qr"
+                    href="https://instagram.com"
                     target="_blank"
                     className="w-9 h-9 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
                   >
                     <Instagram className="w-5 h-5" />
                   </Link>
                   <Link
-                    href="https://www.youtube.com/@BomRomance"
+                    href="https://youtube.com"
                     target="_blank"
                     className="w-9 h-9 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
                   >

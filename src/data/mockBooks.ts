@@ -97,24 +97,6 @@ export const mockBooks: Book[] = [
       { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor', created_at: new Date().toISOString() }
     ]
   },
-  {
-    id: 'mock-jogos-2',
-    title: 'Respawn do Amor',
-    slug: 'respawn-do-amor-mock-jogos-2',
-    author: 'Alex Gamer',
-    description: 'Depois de perder tudo, Alex encontra consolo em um novo MMORPG. O que ele não esperava era conhecer "NightWolf", uma jogadora habilidosa e misteriosa.\n\nQuando descobrem que há um segredo por trás do jogo — e que seus avatares têm mais consciência do que deveriam — os dois iniciam uma jornada que mistura amizade, perigo e romance digital.',
-    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
-    totalViews: 156000,
-    totalChapters: 37,
-    status: 'ongoing',
-    createdAt: new Date('2024-04-15').toISOString(),
-    updatedAt: new Date('2024-11-18').toISOString(),
-    averageRating: 4.7,
-    categories: [
-      { id: 'cat-jogos', name: 'Jogos', slug: 'jogos', description: 'Histórias de games', created_at: new Date().toISOString() },
-      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor', created_at: new Date().toISOString() }
-    ]
-  },
 
   // 💎 4. BILIONÁRIO
   {
@@ -173,24 +155,6 @@ export const mockBooks: Book[] = [
       { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor', created_at: new Date().toISOString() }
     ]
   },
-  {
-    id: 'mock-scifi-2',
-    title: 'O Último Androide',
-    slug: 'o-ultimo-androide-mock-scifi-2',
-    author: 'Dr. Lina Chen',
-    description: 'Quando o governo proíbe a criação de androides com emoções, a cientista Lina esconde seu protótipo — um androide perfeito chamado Kairo.\n\nMas o que começa como um experimento se transforma em algo perigoso… porque Kairo desenvolve sentimentos que não deveriam existir.',
-    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
-    totalViews: 132000,
-    totalChapters: 34,
-    status: 'ongoing',
-    createdAt: new Date('2024-05-15').toISOString(),
-    updatedAt: new Date('2024-11-17').toISOString(),
-    averageRating: 4.6,
-    categories: [
-      { id: 'cat-scifi', name: 'Sci-Fi', slug: 'scifi', description: 'Ficção científica', created_at: new Date().toISOString() },
-      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor', created_at: new Date().toISOString() }
-    ]
-  },
 
   // ❤️‍🔥 6. ROMANCE
   {
@@ -206,23 +170,6 @@ export const mockBooks: Book[] = [
     createdAt: new Date('2024-06-01').toISOString(),
     updatedAt: new Date('2024-11-19').toISOString(),
     averageRating: 4.8,
-    categories: [
-      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor', created_at: new Date().toISOString() }
-    ]
-  },
-  {
-    id: 'mock-romance-2',
-    title: 'O Peso do Nosso Amor',
-    slug: 'o-peso-do-nosso-amor-mock-romance-2',
-    author: 'Noah Silva',
-    description: 'Camila jurou nunca mais se apaixonar. Até conhecer Noah, o enfermeiro que cuida de sua avó e que sempre tem um sorriso pronto.\n\nO problema é que os dois carregam traumas profundos — e amar significa enfrentar o passado doloroso que ambos tentam esconder.',
-    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
-    totalViews: 178000,
-    totalChapters: 39,
-    status: 'ongoing',
-    createdAt: new Date('2024-06-15').toISOString(),
-    updatedAt: new Date('2024-11-18').toISOString(),
-    averageRating: 4.7,
     categories: [
       { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor', created_at: new Date().toISOString() }
     ]
@@ -285,24 +232,6 @@ export const mockBooks: Book[] = [
       { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor', created_at: new Date().toISOString() }
     ]
   },
-  {
-    id: 'mock-lgbtq-2',
-    title: 'Luz e Tempestade',
-    slug: 'luz-e-tempestade-mock-lgbtq-2',
-    author: 'Lucca Theo',
-    description: 'Depois de anos escondendo sua sexualidade, Lucca finalmente se muda para longe.\n\nLá conhece Theo, um músico sensível que o enxerga como ninguém nunca viu.\n\nMas amar alguém tão quebrado quanto ele pode ser o maior desafio de suas vidas.',
-    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
-    totalViews: 154000,
-    totalChapters: 36,
-    status: 'ongoing',
-    createdAt: new Date('2024-08-15').toISOString(),
-    updatedAt: new Date('2024-11-17').toISOString(),
-    averageRating: 4.7,
-    categories: [
-      { id: 'cat-lgbtq', name: 'LGBTQ+', slug: 'lgbtq', description: 'Histórias LGBTQ+', created_at: new Date().toISOString() },
-      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor', created_at: new Date().toISOString() }
-    ]
-  },
 
   // 🔪 9. MISTÉRIO / TERROR
   {
@@ -318,24 +247,6 @@ export const mockBooks: Book[] = [
     createdAt: new Date('2024-09-01').toISOString(),
     updatedAt: new Date('2024-11-19').toISOString(),
     averageRating: 4.8,
-    categories: [
-      { id: 'cat-misterio', name: 'Mistério', slug: 'misterio', description: 'Histórias de mistério', created_at: new Date().toISOString() },
-      { id: 'cat-terror', name: 'Terror', slug: 'terror', description: 'Histórias de terror', created_at: new Date().toISOString() }
-    ]
-  },
-  {
-    id: 'mock-misterio-2',
-    title: 'A Chamada da Meia-Noite',
-    slug: 'a-chamada-da-meia-noite-mock-misterio-2',
-    author: 'Camila Dark',
-    description: 'Camila começa a receber ligações de um número desconhecido. Do outro lado, uma criança que implora por ajuda.\n\nQuando tenta rastrear a origem, descobre algo assustador: a criança morreu há anos.\n\nAgora, o espírito quer que Camila descubra quem a matou.',
-    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
-    totalViews: 176000,
-    totalChapters: 38,
-    status: 'ongoing',
-    createdAt: new Date('2024-09-15').toISOString(),
-    updatedAt: new Date('2024-11-18').toISOString(),
-    averageRating: 4.7,
     categories: [
       { id: 'cat-misterio', name: 'Mistério', slug: 'misterio', description: 'Histórias de mistério', created_at: new Date().toISOString() },
       { id: 'cat-terror', name: 'Terror', slug: 'terror', description: 'Histórias de terror', created_at: new Date().toISOString() }
@@ -399,24 +310,6 @@ export const mockBooks: Book[] = [
       { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor', created_at: new Date().toISOString() }
     ]
   },
-  {
-    id: 'mock-fantasia-2',
-    title: 'O Reino Entre Mundos',
-    slug: 'o-reino-entre-mundos-mock-fantasia-2',
-    author: 'Lina Mirrorborn',
-    description: 'Quando um espelho antigo se quebra, Lina é sugada para um mundo paralelo onde criaturas mágicas vivem em guerra.\n\nLá, um príncipe amaldiçoado acredita que ela é a chave para salvar seu povo — e para quebrar a própria maldição.',
-    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
-    totalViews: 167000,
-    totalChapters: 37,
-    status: 'ongoing',
-    createdAt: new Date('2024-11-10').toISOString(),
-    updatedAt: new Date('2024-11-18').toISOString(),
-    averageRating: 4.7,
-    categories: [
-      { id: 'cat-fantasia', name: 'Fantasia', slug: 'fantasia', description: 'Mundos fantásticos', created_at: new Date().toISOString() },
-      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor', created_at: new Date().toISOString() }
-    ]
-  },
 
   // 🎓 12. YA / TEEN
   {
@@ -432,24 +325,6 @@ export const mockBooks: Book[] = [
     createdAt: new Date('2024-08-20').toISOString(),
     updatedAt: new Date('2024-11-18').toISOString(),
     averageRating: 4.7,
-    categories: [
-      { id: 'cat-teen', name: 'Teen', slug: 'teen', description: 'Histórias jovens', created_at: new Date().toISOString() },
-      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor', created_at: new Date().toISOString() }
-    ]
-  },
-  {
-    id: 'mock-teen-2',
-    title: 'O Garoto do Fim do Corredor',
-    slug: 'o-garoto-do-fim-do-corredor-mock-teen-2',
-    author: 'Júlia Daniel',
-    description: 'Nova na escola, Júlia só quer passar despercebida. Mas tudo muda quando ela conhece Daniel, o garoto misterioso que sempre está sozinho.\n\nAos poucos, eles criam um laço delicado — e perigoso o suficiente para mudar tudo.',
-    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
-    totalViews: 132000,
-    totalChapters: 33,
-    status: 'ongoing',
-    createdAt: new Date('2024-09-05').toISOString(),
-    updatedAt: new Date('2024-11-17').toISOString(),
-    averageRating: 4.6,
     categories: [
       { id: 'cat-teen', name: 'Teen', slug: 'teen', description: 'Histórias jovens', created_at: new Date().toISOString() },
       { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor', created_at: new Date().toISOString() }
@@ -475,24 +350,6 @@ export const mockBooks: Book[] = [
       { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor', created_at: new Date().toISOString() }
     ]
   },
-  {
-    id: 'mock-mm-2',
-    title: 'Nós Dois Contra o Mundo',
-    slug: 'nos-dois-contra-o-mundo-mock-mm-2',
-    author: 'Pedro Lucas',
-    description: 'Após ser expulso de casa, Pedro precisa recomeçar do zero.\n\nEle só não esperava ser acolhido por Lucas, o bad boy da universidade.\n\nEntre convivência forçada, provocações e confissões inesperadas, nasce um romance que nenhum dos dois estava preparado para viver.',
-    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
-    totalViews: 165000,
-    totalChapters: 37,
-    status: 'ongoing',
-    createdAt: new Date('2024-08-05').toISOString(),
-    updatedAt: new Date('2024-11-17').toISOString(),
-    averageRating: 4.7,
-    categories: [
-      { id: 'cat-mm', name: 'MM Romance', slug: 'mm', description: 'Romance masculino', created_at: new Date().toISOString() },
-      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor', created_at: new Date().toISOString() }
-    ]
-  },
 
   // 🩸 14. VAMPIROS
   {
@@ -508,24 +365,6 @@ export const mockBooks: Book[] = [
     createdAt: new Date('2024-09-20').toISOString(),
     updatedAt: new Date('2024-11-19').toISOString(),
     averageRating: 4.8,
-    categories: [
-      { id: 'cat-vampiro', name: 'Vampiros', slug: 'vampiro', description: 'Histórias de vampiros', created_at: new Date().toISOString() },
-      { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor', created_at: new Date().toISOString() }
-    ]
-  },
-  {
-    id: 'mock-vampiro-2',
-    title: 'A Rainha das Sombras',
-    slug: 'a-rainha-das-sombras-mock-vampiro-2',
-    author: 'Kassandra Darkborn',
-    description: 'Kassandra foi transformada contra sua vontade e abandonada à própria sorte.\n\nAgora, séculos depois, está decidida a recuperar o trono vampírico perdido.\n\nMas para isso, terá que se aliar a um guerreiro sombrio que desperta desejos perigosos.',
-    coverUrl: null, // ✅ Usa getBookCoverPathFromTitle(title) no componente
-    totalViews: 201000,
-    totalChapters: 42,
-    status: 'ongoing',
-    createdAt: new Date('2024-10-05').toISOString(),
-    updatedAt: new Date('2024-11-18').toISOString(),
-    averageRating: 4.7,
     categories: [
       { id: 'cat-vampiro', name: 'Vampiros', slug: 'vampiro', description: 'Histórias de vampiros', created_at: new Date().toISOString() },
       { id: 'cat-romance', name: 'Romance', slug: 'romance', description: 'Histórias de amor', created_at: new Date().toISOString() }
